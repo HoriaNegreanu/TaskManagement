@@ -12,5 +12,6 @@ namespace TaskManagement.Data
         {
         }
         public DbSet<TaskManagement.Models.Movie>? Movie { get; set; }
+        public DbSet<TaskManagement.Models.Contract>? Contract { get; set; }
     }
 }

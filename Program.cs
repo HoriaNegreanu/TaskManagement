@@ -13,6 +13,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
@@ -24,12 +25,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
 
     SeedData.Initialize(services);
-    await SeedRoles.Initialize(services);
-
-    //var context = services.GetRequiredService<ApplicationDbContext>();
-    //var userStore = new UserStore<IdentityUser>(context);
-    //var roleStore = new RoleStore<IdentityRole>(context);
-    //await ContextSeed.SeedRolesAsync(userStore, roleStore);
+    await SeedUser.Initialize(services);
 }
 
 // Configure the HTTP request pipeline.

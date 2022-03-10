@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TaskManagement.Data;
 using TaskManagement.Models;
@@ -13,10 +14,6 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
-//builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-//            .AddEntityFrameworkStores<ApplicationDbContext>()
-//            .AddDefaultUI()
-//            .AddDefaultTokenProviders();
 
 builder.Services.AddControllersWithViews();
 
@@ -27,7 +24,12 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
 
     SeedData.Initialize(services);
-    SeedRoles.Initialize(services);
+    await SeedRoles.Initialize(services);
+
+    //var context = services.GetRequiredService<ApplicationDbContext>();
+    //var userStore = new UserStore<IdentityUser>(context);
+    //var roleStore = new RoleStore<IdentityRole>(context);
+    //await ContextSeed.SeedRolesAsync(userStore, roleStore);
 }
 
 // Configure the HTTP request pipeline.

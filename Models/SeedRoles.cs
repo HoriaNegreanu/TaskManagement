@@ -7,7 +7,7 @@ namespace TaskManagement.Models
 {
     public class SeedRoles
     {
-        public static void Initialize(IServiceProvider serviceProvider)
+        public static async Task Initialize(IServiceProvider serviceProvider)
         {
             var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>());
 
@@ -19,8 +19,24 @@ namespace TaskManagement.Models
 
                 if (!context.Roles.Any(r => r.Name == role))
                 {
-                    roleStore.CreateAsync(new IdentityRole(role));
+                    var newRole = new IdentityRole(role);
+                    newRole.NormalizedName = role.ToUpper();
+                    await roleStore.CreateAsync(newRole);
                 }
+            }
+
+            var usersStore = new UserStore<IdentityUser>(context);
+            if (!context.Users.Any(u => u.UserName == "admin@email.com"))
+            {
+                var adminUser = new IdentityUser("admin@email.com");
+                adminUser.NormalizedEmail = adminUser.UserName.ToUpper();
+                adminUser.Email = adminUser.UserName;
+                adminUser.NormalizedEmail = adminUser.UserName.ToUpper();
+                adminUser.EmailConfirmed = true;
+                adminUser.PasswordHash = adminUser.UserName.ToUpper();
+                adminUser.LockoutEnabled = true;
+
+                await usersStore.CreateAsync(new IdentityUser("admin@email.com"));
             }
         }
     }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,22 +12,22 @@ using TaskManagement.Models;
 
 namespace TaskManagement.Controllers
 {
-    public class ContractsController : Controller
+    public class ContactsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ContractsController(ApplicationDbContext context)
+        public ContactsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Contracts
+        // GET: Contacts
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Contract.ToListAsync());
+            return View(await _context.Contact.ToListAsync());
         }
 
-        // GET: Contracts/Details/5
+        // GET: Contacts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,39 +35,40 @@ namespace TaskManagement.Controllers
                 return NotFound();
             }
 
-            var contract = await _context.Contract
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (contract == null)
+            var contact = await _context.Contact
+                .FirstOrDefaultAsync(m => m.ContactId == id);
+            if (contact == null)
             {
                 return NotFound();
             }
 
-            return View(contract);
+            return View(contact);
         }
 
-        // GET: Contracts/Create
+        // GET: Contacts/Create
+        [Authorize(Policy = "RequireAdministratorRole")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Contracts/Create
+        // POST: Contacts/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Address,City,State,Zip,Email")] Contract contract)
+        public async Task<IActionResult> Create([Bind("ContactId,Name,Address,City,State,Zip,Email")] Contact contact)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(contract);
+                _context.Add(contact);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(contract);
+            return View(contact);
         }
 
-        // GET: Contracts/Edit/5
+        // GET: Contacts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,22 +76,22 @@ namespace TaskManagement.Controllers
                 return NotFound();
             }
 
-            var contract = await _context.Contract.FindAsync(id);
-            if (contract == null)
+            var contact = await _context.Contact.FindAsync(id);
+            if (contact == null)
             {
                 return NotFound();
             }
-            return View(contract);
+            return View(contact);
         }
 
-        // POST: Contracts/Edit/5
+        // POST: Contacts/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Address,City,State,Zip,Email")] Contract contract)
+        public async Task<IActionResult> Edit(int id, [Bind("ContactId,Name,Address,City,State,Zip,Email")] Contact contact)
         {
-            if (id != contract.Id)
+            if (id != contact.ContactId)
             {
                 return NotFound();
             }
@@ -98,12 +100,12 @@ namespace TaskManagement.Controllers
             {
                 try
                 {
-                    _context.Update(contract);
+                    _context.Update(contact);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ContractExists(contract.Id))
+                    if (!ContactExists(contact.ContactId))
                     {
                         return NotFound();
                     }
@@ -114,10 +116,10 @@ namespace TaskManagement.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(contract);
+            return View(contact);
         }
 
-        // GET: Contracts/Delete/5
+        // GET: Contacts/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -125,30 +127,30 @@ namespace TaskManagement.Controllers
                 return NotFound();
             }
 
-            var contract = await _context.Contract
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (contract == null)
+            var contact = await _context.Contact
+                .FirstOrDefaultAsync(m => m.ContactId == id);
+            if (contact == null)
             {
                 return NotFound();
             }
 
-            return View(contract);
+            return View(contact);
         }
 
-        // POST: Contracts/Delete/5
+        // POST: Contacts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var contract = await _context.Contract.FindAsync(id);
-            _context.Contract.Remove(contract);
+            var contact = await _context.Contact.FindAsync(id);
+            _context.Contact.Remove(contact);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ContractExists(int id)
+        private bool ContactExists(int id)
         {
-            return _context.Contract.Any(e => e.Id == id);
+            return _context.Contact.Any(e => e.ContactId == id);
         }
     }
 }

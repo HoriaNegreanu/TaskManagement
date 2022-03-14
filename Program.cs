@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,13 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+//https://docs.microsoft.com/en-us/aspnet/core/security/authorization/secure-data?view=aspnetcore-6.0
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdministratorRole",
+         policy => policy.RequireRole("Administrator"));
+});
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -26,6 +34,7 @@ using (var scope = app.Services.CreateScope())
 
     SeedData.Initialize(services);
     await SeedUser.Initialize(services);
+    await SeedDataContacts.Initialize(services);
 }
 
 // Configure the HTTP request pipeline.

@@ -2,9 +2,12 @@
 
 namespace TaskManagement.Models
 {
-    public class Contract
+    public class Contact
     {
-        public int Id { get; set; }
+        public int ContactId { get; set; }
+
+        // user ID from AspNetUser table.
+        public string? OwnerID { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
@@ -13,5 +16,12 @@ namespace TaskManagement.Models
 
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
+        public ContactStatus Status { get; set; }
+    }
+    public enum ContactStatus
+    {
+        Submitted,
+        Approved,
+        Rejected
     }
 }

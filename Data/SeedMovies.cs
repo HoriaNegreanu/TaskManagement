@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TaskManagement.Data;
+using TaskManagement.Models;
 
-namespace TaskManagement.Models
+namespace TaskManagement.Data
 {
-    public static class SeedData
+    public class SeedMovies
     {
         public static void Initialize(IServiceProvider serviceProvider)
         {

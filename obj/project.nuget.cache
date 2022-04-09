@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "gkL84G+joidh6GlZtTbmZ0FuhHf9yrI0VcFAq67MRAhLVesRDWIjXAX/EMhqMgA8e3erLD9xYmk16ypRLPlV8A==",
+  "dgSpecHash": "NmgNRzjXvbORubxYO2tBCdlZzi6Sj3oV+id3q0fxOZFvpwLeFArYDyhg3ntKNYhLyBOsCDNpb1T1YdWR51VfzA==",
   "success": true,
   "projectFilePath": "E:\\OneDrive\\Documents\\Documente\\Horia\\Facultate\\Anul III\\Licenta\\Applicatie Licenta Horia Negreanu\\TaskManagement\\TaskManagement\\TaskManagement\\TaskManagement.csproj",
   "expectedPackageFiles": [
@@ -43,8 +43,8 @@
     "C:\\Users\\horia\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\7.0.0-preview.1.22076.6\\microsoft.entityframeworkcore.analyzers.7.0.0-preview.1.22076.6.nupkg.sha512",
     "C:\\Users\\horia\\.nuget\\packages\\microsoft.entityframeworkcore.design\\7.0.0-preview.1.22076.6\\microsoft.entityframeworkcore.design.7.0.0-preview.1.22076.6.nupkg.sha512",
     "C:\\Users\\horia\\.nuget\\packages\\microsoft.entityframeworkcore.relational\\7.0.0-preview.1.22076.6\\microsoft.entityframeworkcore.relational.7.0.0-preview.1.22076.6.nupkg.sha512",
-    "C:\\Users\\horia\\.nuget\\packages\\microsoft.entityframeworkcore.sqlserver\\6.0.2\\microsoft.entityframeworkcore.sqlserver.6.0.2.nupkg.sha512",
-    "C:\\Users\\horia\\.nuget\\packages\\microsoft.entityframeworkcore.tools\\6.0.2\\microsoft.entityframeworkcore.tools.6.0.2.nupkg.sha512",
+    "C:\\Users\\horia\\.nuget\\packages\\microsoft.entityframeworkcore.sqlserver\\6.0.3\\microsoft.entityframeworkcore.sqlserver.6.0.3.nupkg.sha512",
+    "C:\\Users\\horia\\.nuget\\packages\\microsoft.entityframeworkcore.tools\\6.0.3\\microsoft.entityframeworkcore.tools.6.0.3.nupkg.sha512",
     "C:\\Users\\horia\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\7.0.0-preview.1.22076.8\\microsoft.extensions.caching.abstractions.7.0.0-preview.1.22076.8.nupkg.sha512",
     "C:\\Users\\horia\\.nuget\\packages\\microsoft.extensions.caching.memory\\7.0.0-preview.1.22076.8\\microsoft.extensions.caching.memory.7.0.0-preview.1.22076.8.nupkg.sha512",
     "C:\\Users\\horia\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\7.0.0-preview.1.22076.8\\microsoft.extensions.configuration.abstractions.7.0.0-preview.1.22076.8.nupkg.sha512",

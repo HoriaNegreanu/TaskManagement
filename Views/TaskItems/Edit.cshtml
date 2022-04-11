@@ -25,7 +25,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="ActivatedDate" class="control-label"></label>
-                <input asp-for="ActivatedDate" class="form-control" />
+                <input asp-for="ActivatedDate" class="form-control" readonly/>
                 <span asp-validation-for="ActivatedDate" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -35,17 +35,28 @@
             </div>
             <div class="form-group">
                 <label asp-for="Priority" class="control-label"></label>
-                <input asp-for="Priority" class="form-control" />
+                @Html.DropDownListFor(m => m.Priority, 
+                new SelectList(Enum.GetValues(typeof(Priority))), 
+                "Select Priority",
+                new {@class= "form-control"})
                 <span asp-validation-for="Priority" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Status" class="control-label"></label>
+                @Html.DropDownListFor(m => m.Status, 
+                new SelectList(Enum.GetValues(typeof(Status))), 
+                "Select Status",
+                new {@class= "form-control"})
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
+                <textarea asp-for="Description" class="form-control" ></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
+            </div>  
         </form>
     </div>
 </div>

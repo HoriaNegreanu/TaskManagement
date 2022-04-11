@@ -58,7 +58,7 @@ namespace TaskManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,CreatedBy,AssignedTo,CreatedDate,ActivatedDate,WorkedHours,Priority,Description")] TaskItem taskItem)
+        public async Task<IActionResult> Create([Bind("ID,Title,CreatedBy,AssignedTo,CreatedDate,ActivatedDate,WorkedHours,Priority,Status,Description")] TaskItem taskItem)
         {
             if (ModelState.IsValid)
             {
@@ -68,6 +68,11 @@ namespace TaskManagement.Controllers
                 taskItem.CreatedBy = name;
                 taskItem.WorkedHours = 0;
                 taskItem.ActivatedDate = null;
+                //taskItem.Status = Status.Proposed.ToString();
+                if(taskItem.Status == Status.Active.ToString())
+                {
+                    taskItem.ActivatedDate = DateTime.Now;
+                }
                 _context.Add(taskItem);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -96,7 +101,7 @@ namespace TaskManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,AssignedTo,ActivatedDate,WorkedHours,Priority,Description")] TaskItem taskItem)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,AssignedTo,ActivatedDate,WorkedHours,Priority,Status,Description")] TaskItem taskItem)
         {
             if (id != taskItem.ID)
             {
@@ -111,6 +116,7 @@ namespace TaskManagement.Controllers
                     TaskItem updateT = await _context.TaskItem.FindAsync(id);
                     var createdBy = updateT.CreatedBy;
                     var createdOn = updateT.CreatedDate;
+                    var status = updateT.Status;
                     foreach (var property in typeof(TaskItem).GetProperties())
                     {
                         var propval = property.GetValue(taskItem);
@@ -118,6 +124,16 @@ namespace TaskManagement.Controllers
                     }
                     updateT.CreatedDate = createdOn;
                     updateT.CreatedBy = createdBy;
+                    if(updateT.Status != status && updateT.Status == Status.Active.ToString())
+                    {
+                        updateT.ActivatedDate = DateTime.Now;
+                    }
+                    else if(updateT.Status != status && status == Status.Active.ToString())
+                    {
+                        var timeWorked = (DateTime.Now - updateT.ActivatedDate).Value;
+                        updateT.WorkedHours += Math.Abs(Convert.ToDecimal(timeWorked.TotalHours));
+                        updateT.ActivatedDate = null;
+                    }
                     _context.Update(updateT);
                     await _context.SaveChangesAsync();
                 }
@@ -170,5 +186,6 @@ namespace TaskManagement.Controllers
         {
             return _context.TaskItem.Any(e => e.ID == id);
         }
+
     }
 }

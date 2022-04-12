@@ -38,8 +38,10 @@ namespace TaskManagement.Models
         public string? Description { get; set; }
 
         [Required]
-        [RegularExpression("Proposed|Active|Review", ErrorMessage = "The status of a task can only be 'Proposed', 'Active' or 'Review'")]
+        [RegularExpression("Proposed|Active|Review|Closed", ErrorMessage = "The status of a task can only be 'Proposed', 'Active', 'Review' or 'Closed'")]
         public string? Status { get; set; }
+
+        public ICollection<Comment>? Comments { get; set; }
     }
 
     public enum Priority
@@ -53,6 +55,7 @@ namespace TaskManagement.Models
     {
         Proposed,
         Active,
-        Review
+        Review,
+        Closed
     }
 }

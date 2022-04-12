@@ -13,6 +13,8 @@ namespace TaskManagement.Data
         }
         public DbSet<TaskManagement.Models.Movie>? Movie { get; set; }
         public DbSet<TaskManagement.Models.Contact>? Contact { get; set; }
+        public DbSet<TaskManagement.Models.TaskItem> TaskItem { get; set; }
+        public DbSet<TaskManagement.Models.Comment> Comment { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -22,6 +24,5 @@ namespace TaskManagement.Data
             // Add your customizations after calling base.OnModelCreating(builder);
         }
 
-        public DbSet<TaskManagement.Models.TaskItem> TaskItem { get; set; }
     }
 }

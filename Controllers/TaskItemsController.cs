@@ -26,7 +26,7 @@ namespace TaskManagement.Controllers
         // GET: TaskItems
         public async Task<IActionResult> Index()
         {
-            return View(await _context.TaskItem.ToListAsync());
+            return View("Index", await _context.TaskItem.ToListAsync());
         }
 
         // GET: TaskItems/Details/5
@@ -44,7 +44,13 @@ namespace TaskManagement.Controllers
                 return NotFound();
             }
 
-            return View(taskItem);
+            //gets comments associated with task
+            var listComments = await _context.Comment.Where(c => c.TaskItemID == id).ToListAsync();
+            var result = new TaskItemViewModel();
+            result.TaskItem = taskItem;
+            result.Comments = listComments;
+
+            return View(result);
         }
 
         // GET: TaskItems/Create

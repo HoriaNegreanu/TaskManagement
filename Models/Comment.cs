@@ -14,9 +14,11 @@ namespace TaskManagement.Models
         [StringLength(50)]
         [Required]
         public string Author { get; set; }
-
         public int TaskItemID { get; set; }
-
         public TaskItem? TaskItem { get; set; }
+
+        [Display(Name = "Created on")]
+        public DateTime? CreatedDate { get; set; }
+
     }
 }

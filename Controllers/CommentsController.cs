@@ -51,7 +51,7 @@ namespace TaskManagement.Controllers
         // GET: Comments/Create
         public IActionResult Create()
         {
-            ViewData["TaskItemID"] = new SelectList(_context.TaskItem, "ID", "Description");
+            ViewData["TaskItemID"] = new SelectList(_context.TaskItem, "ID", "Title");
             return View();
         }
 
@@ -60,10 +60,11 @@ namespace TaskManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Message,Author,TaskItemID")] Comment comment)
+        public async Task<IActionResult> Create([Bind("ID,Message,Author,TaskItemID,CreatedDate")] Comment comment)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
             comment.Author = user.FirstName + " " + user.LastName;
+            comment.CreatedDate = DateTime.Now;
             if (ModelState.ContainsKey("Author"))
                 ModelState["Author"].Errors.Clear();
             //ModelState[Author].Errors.Clear();

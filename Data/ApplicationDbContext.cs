@@ -12,9 +12,9 @@ namespace TaskManagement.Data
         {
         }
         public DbSet<TaskManagement.Models.Movie>? Movie { get; set; }
-        public DbSet<TaskManagement.Models.Contact>? Contact { get; set; }
         public DbSet<TaskManagement.Models.TaskItem> TaskItem { get; set; }
         public DbSet<TaskManagement.Models.Comment> Comment { get; set; }
+        public DbSet<TaskManagement.Models.FileOnFileSystemModel> FileOnFileSystem { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

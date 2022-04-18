@@ -3,9 +3,13 @@
 @{
     ViewData["Title"] = "Details";
 }
-
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-success alert-dismissible" style="margin-top:20px">
+        @ViewBag.Message
+    </div>
+}
 <h1>Details</h1>
-
 <div>
     <h4>TaskItem</h4>
     <hr />
@@ -66,40 +70,79 @@
         </dd>
     </dl>
 </div>
-<div>
-    <h4>Comments</h4>
-    <hr />
-    @foreach (var item in Model.Comments)
-    {
-        <div class="card-body">
-            <div class="mb-3">
-                Author: @Html.DisplayFor(modelItem => item.Author) - @Html.DisplayFor(modelItem => item.CreatedDate)
-            </div>
-            <div class="mb-3">
-                @Html.DisplayFor(modelItem => item.Message)
-            </div>
-        </div>
-    }
-</div>
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" asp-controller="Comments">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="TaskItemID" value="@Model.TaskItem.ID"/>
-            @*<div class="form-group mb-3">
-                <label asp-for="Author" class="control-label"></label>
-                <input asp-for="Author" class="form-control" />
-                <span asp-validation-for="Author" class="text-danger"></span>
-            </div>*@
-            <div class="form-group mb-3">
-                <label asp-for="Message" class="control-label"></label>
-                <input asp-for="Message" class="form-control" />
-                <span asp-validation-for="Message" class="text-danger"></span>
+    <div class="col-md-6">
+        <h4>Comments</h4>
+        <hr />
+        <div>
+            <form asp-action="Create" asp-controller="Comments">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="TaskItemID" value="@Model.TaskItem.ID" />
+                <div class="form-group mb-3">
+                    <label asp-for="Message" class="control-label"></label>
+                    <input asp-for="Message" class="form-control" />
+                    <span asp-validation-for="Message" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+        @foreach (var item in Model.Comments)
+        {
+            <div class="card-body">
+                <div class="mb-3">
+                    Author: @Html.DisplayFor(modelItem => item.Author) - @Html.DisplayFor(modelItem => item.CreatedDate)
+                </div>
+                <div class="mb-3">
+                    @Html.DisplayFor(modelItem => item.Message)
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        }
+    </div>
+    <div class="col-md-6">
+        <h4>Files</h4>
+        <hr />
+        <div>
+            <form method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="TaskItemID" value="@Model.TaskItem.ID" />
+                <div class="form-group mb-3">
+                    <input type="file" name="files" multiple required />
+                    <input type="text" autocomplete="off" placeholder="Enter File Description" name="description" required />
+                </div>
+                <div class="form-group mb-3">
+                    <button type="submit" class="btn btn-primary" asp-controller="Files" asp-action="UploadToFileSystem">Upload to File System</button>
+                </div>  
+            </form>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>File Type</th>
+                        <th>Created On</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var file in Model.FilesOnFileSystem)
+                    {
+                        <tr>
+                            <th>@file.Id</th>
+                            <td>@file.Name</td>
+                            <td>@file.Description</td>
+                            <td>@file.FileType</td>
+                            <td>@file.CreatedOn</td>
+                            <td>
+                                <a type="button" class="btn btn-primary" asp-controller="Files" asp-action="DownloadFileFromFileSystem" asp-route-id="@file.Id">Download</a>
+                                <a type="button" class="btn btn-danger" asp-controller="Files" asp-action="DeleteFileFromFileSystem" asp-route-id="@file.Id">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 <div>

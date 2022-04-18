@@ -67,7 +67,6 @@ namespace TaskManagement.Controllers
             comment.CreatedDate = DateTime.Now;
             if (ModelState.ContainsKey("Author"))
                 ModelState["Author"].Errors.Clear();
-            //ModelState[Author].Errors.Clear();
             ModelState.Remove("Author");
 
             if (ModelState.IsValid)
@@ -77,6 +76,7 @@ namespace TaskManagement.Controllers
                 return RedirectToAction("Details", "TaskItems", new { id = comment.TaskItemID});
             }
             ViewData["TaskItemID"] = new SelectList(_context.TaskItem, "ID", "Description", comment.TaskItemID);
+            TempData["Message"] = "Comment successfully posted";
             return RedirectToAction("Details", "TaskItems", new { id = comment.TaskItemID });
         }
 

@@ -44,11 +44,18 @@ namespace TaskManagement.Controllers
                 return NotFound();
             }
 
+            //Creates ViewBag for displaying messages
+            ViewBag.Message = TempData["Message"];
+
             //gets comments associated with task
             var listComments = await _context.Comment.Where(c => c.TaskItemID == id).ToListAsync();
             var result = new TaskItemViewModel();
             result.TaskItem = taskItem;
-            result.Comments = listComments;
+            result.Comments = listComments.OrderByDescending(i => i.CreatedDate).ToList();
+
+            //gets files associated with task
+            var fileuploadViewModel = await LoadAllFiles(id);
+            result.FilesOnFileSystem = fileuploadViewModel.FilesOnFileSystem;
 
             return View(result);
         }
@@ -191,6 +198,29 @@ namespace TaskManagement.Controllers
         private bool TaskItemExists(int id)
         {
             return _context.TaskItem.Any(e => e.ID == id);
+        }
+
+        private async Task<FileUploadViewModel> LoadAllFiles(int? id)
+        {
+            var viewModel = new FileUploadViewModel();
+            var allFiles = await _context.FileOnFileSystem.ToListAsync();
+            viewModel.FilesOnFileSystem = new List<FileOnFileSystemModel>();
+            foreach(var file in allFiles)
+            {
+                if(getTaskIdFromPath(file.FilePath) == id)
+                {
+                    viewModel.FilesOnFileSystem.Add(file);
+                }
+            }
+            return viewModel;
+        }
+
+        private int getTaskIdFromPath(string path)
+        {
+            var toBeSearched = "Files\\";
+            var result = path.Substring(path.IndexOf(toBeSearched) + toBeSearched.Length);
+            result = result.Substring(0, result.IndexOf("\\"));
+            return Int32.Parse(result);
         }
 
     }

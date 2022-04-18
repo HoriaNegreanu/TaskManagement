@@ -36,11 +36,11 @@ namespace TaskManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadToFileSystem(List<IFormFile> files, string description)
+        public async Task<IActionResult> UploadToFileSystem(List<IFormFile> files, string description, int TaskItemId)
         {
             foreach (var file in files)
             {
-                var basePath = Path.Combine(Directory.GetCurrentDirectory() + "\\Files\\");
+                var basePath = Path.Combine(Directory.GetCurrentDirectory() + "\\Files\\" + TaskItemId.ToString() + "\\");
                 bool basePathExists = System.IO.Directory.Exists(basePath);
                 if (!basePathExists) Directory.CreateDirectory(basePath);
                 var fileName = Path.GetFileNameWithoutExtension(file.FileName);
@@ -69,7 +69,7 @@ namespace TaskManagement.Controllers
                 }
             }
             TempData["Message"] = "File successfully uploaded to File System.";
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", "TaskItems", new { id = TaskItemId });
         }
 
         public async Task<IActionResult> DownloadFileFromFileSystem(int id)
@@ -96,7 +96,14 @@ namespace TaskManagement.Controllers
             _context.FileOnFileSystem.Remove(file);
             _context.SaveChanges();
             TempData["Message"] = $"Removed {file.Name + file.Extension} successfully from File System.";
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", "TaskItems", new { id = getTaskIdFromPath(file.FilePath) });
+        }
+        private int getTaskIdFromPath(string path)
+        {
+            var toBeSearched = "Files\\";
+            var result = path.Substring(path.IndexOf(toBeSearched) + toBeSearched.Length);
+            result = result.Substring(0, result.IndexOf("\\"));
+            return Int32.Parse(result);
         }
     }
 }

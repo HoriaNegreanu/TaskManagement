@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -48,25 +49,27 @@ namespace TaskManagement.Controllers
                 var extension = Path.GetExtension(file.FileName);
                 var user = await _userManager.GetUserAsync(HttpContext.User);
                 var uploadedBy = user.FirstName + " " + user.LastName;
-                if (!System.IO.File.Exists(filePath))
+                if (System.IO.File.Exists(filePath))
                 {
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await file.CopyToAsync(stream);
-                    }
-                    var fileModel = new FileOnFileSystemModel
-                    {
-                        CreatedOn = DateTime.Now,
-                        FileType = file.ContentType,
-                        Extension = extension,
-                        Name = fileName,
-                        Description = description,
-                        UploadedBy = uploadedBy,
-                        FilePath = filePath
-                    };
-                    _context.FileOnFileSystem.Add(fileModel);
-                    _context.SaveChanges();
+                    filePath = GetUniqueFilePath(filePath);
+                    fileName = Path.GetFileNameWithoutExtension(filePath);
                 }
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+                var fileModel = new FileOnFileSystemModel
+                {
+                    CreatedOn = DateTime.Now,
+                    FileType = file.ContentType,
+                    Extension = extension,
+                    Name = fileName,
+                    Description = description,
+                    UploadedBy = uploadedBy,
+                    FilePath = filePath
+                };
+                _context.FileOnFileSystem.Add(fileModel);
+                _context.SaveChanges();
             }
             TempData["Message"] = "File successfully uploaded to File System.";
             return RedirectToAction("Details", "TaskItems", new { id = TaskItemId });
@@ -98,12 +101,44 @@ namespace TaskManagement.Controllers
             TempData["Message"] = $"Removed {file.Name + file.Extension} successfully from File System.";
             return RedirectToAction("Details", "TaskItems", new { id = getTaskIdFromPath(file.FilePath) });
         }
+
+        //gets task id from a path
         private int getTaskIdFromPath(string path)
         {
             var toBeSearched = "Files\\";
             var result = path.Substring(path.IndexOf(toBeSearched) + toBeSearched.Length);
             result = result.Substring(0, result.IndexOf("\\"));
             return Int32.Parse(result);
+        }
+
+        //if file already exists add (#) to end of file path
+        public static string GetUniqueFilePath(string filePath)
+        {
+            if (System.IO.File.Exists(filePath))
+            {
+                string folderPath = Path.GetDirectoryName(filePath);
+                string fileName = Path.GetFileNameWithoutExtension(filePath);
+                string extension = Path.GetExtension(filePath);
+                int number = 1;
+
+                Match regex = Regex.Match(fileName, @"^(.+) \((\d+)\)$");
+
+                if (regex.Success)
+                {
+                    fileName = regex.Groups[1].Value;
+                    number = int.Parse(regex.Groups[2].Value);
+                }
+
+                do
+                {
+                    number++;
+                    string newFileName = $"{fileName} ({number}){extension}";
+                    filePath = Path.Combine(folderPath, newFileName);
+                }
+                while (System.IO.File.Exists(filePath));
+            }
+
+            return filePath;
         }
     }
 }

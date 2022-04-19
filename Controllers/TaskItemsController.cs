@@ -189,8 +189,22 @@ namespace TaskManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            //delete Task from DB
             var taskItem = await _context.TaskItem.FindAsync(id);
             _context.TaskItem.Remove(taskItem);
+
+            //delete all files associated with task from DB
+            var viewModel = await LoadAllFiles(id);
+            foreach (var file in viewModel.FilesOnFileSystem)
+            {
+                _context.FileOnFileSystem.Remove(file);
+            }
+            //delete task files folder
+            var basePath = Path.Combine(Directory.GetCurrentDirectory() + "\\Files\\" + id.ToString() + "\\");
+            bool basePathExists = System.IO.Directory.Exists(basePath);
+            if (basePathExists) Directory.Delete(basePath, true);
+
+            //save DB changes
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -200,6 +214,7 @@ namespace TaskManagement.Controllers
             return _context.TaskItem.Any(e => e.ID == id);
         }
 
+        //gets files associated with task
         private async Task<FileUploadViewModel> LoadAllFiles(int? id)
         {
             var viewModel = new FileUploadViewModel();
@@ -215,6 +230,7 @@ namespace TaskManagement.Controllers
             return viewModel;
         }
 
+        //gets task id from a path
         private int getTaskIdFromPath(string path)
         {
             var toBeSearched = "Files\\";

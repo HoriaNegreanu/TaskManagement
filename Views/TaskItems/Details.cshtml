@@ -70,6 +70,10 @@
         </dd>
     </dl>
 </div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.TaskItem.ID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
 <div class="row">
     <div class="col-md-6">
         <h4>Comments</h4>
@@ -144,8 +148,4 @@
             </table>
         </div>
     </div>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.TaskItem.ID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
 </div>

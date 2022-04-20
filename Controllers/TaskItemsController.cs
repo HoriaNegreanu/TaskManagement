@@ -63,6 +63,8 @@ namespace TaskManagement.Controllers
         // GET: TaskItems/Create
         public IActionResult Create()
         {
+            ViewData["Status"] = CreateStatusSelectList();
+            ViewData["AssignedTo"] = CreateUsersSelectList();
             return View();
         }
 
@@ -96,6 +98,8 @@ namespace TaskManagement.Controllers
         // GET: TaskItems/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            ViewData["Status"] = CreateStatusSelectList();
+            ViewData["AssignedTo"] = CreateUsersSelectList();
             if (id == null)
             {
                 return NotFound();
@@ -214,6 +218,29 @@ namespace TaskManagement.Controllers
             return _context.TaskItem.Any(e => e.ID == id);
         }
 
+        //set task status to 'Closed'
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CloseTask(int? id)
+        {
+            var taskItem = await _context.TaskItem.FindAsync(id);
+            if (taskItem == null)
+            {
+                return NotFound();
+            }
+            var status = taskItem.Status;
+            taskItem.Status = Status.Closed.ToString();
+            if (taskItem.Status != status && status == Status.Active.ToString())
+            {
+                var timeWorked = (DateTime.Now - taskItem.ActivatedDate).Value;
+                taskItem.WorkedHours += Math.Abs(Convert.ToDecimal(timeWorked.TotalHours));
+                taskItem.ActivatedDate = null;
+            }
+            _context.Update(taskItem);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
         //gets files associated with task
         private async Task<FileUploadViewModel> LoadAllFiles(int? id)
         {
@@ -237,6 +264,22 @@ namespace TaskManagement.Controllers
             var result = path.Substring(path.IndexOf(toBeSearched) + toBeSearched.Length);
             result = result.Substring(0, result.IndexOf("\\"));
             return Int32.Parse(result);
+        }
+
+        //creates list with statuses except for "Closed"
+        private SelectList CreateStatusSelectList()
+        {
+            var selectList = new SelectList(Enum.GetValues(typeof(Status))
+                        .Cast<Status>()
+                        .Where(e => e != Status.Closed));
+            return selectList;
+        }
+
+        //creates list with user names
+        private SelectList CreateUsersSelectList()
+        {
+            var selectList = new SelectList(_context.Users, "FullName", "FullName");
+            return selectList;
         }
 
     }

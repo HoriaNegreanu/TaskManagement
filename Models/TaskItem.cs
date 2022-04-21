@@ -42,6 +42,12 @@ namespace TaskManagement.Models
         public string? Status { get; set; }
 
         public ICollection<Comment>? Comments { get; set; }
+
+        [Display(Name = "Project")]
+        public int? ProjectID { get; set; }
+
+        [ForeignKey("ProjectID")]
+        public virtual Project? Project { get; set; }
     }
 
     public enum Priority

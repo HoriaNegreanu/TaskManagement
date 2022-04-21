@@ -26,7 +26,8 @@ namespace TaskManagement.Controllers
         // GET: TaskItems
         public async Task<IActionResult> Index()
         {
-            return View("Index", await _context.TaskItem.ToListAsync());
+            var taskItems = await _context.TaskItem.Include(t => t.Project).ToListAsync();
+            return View("Index", taskItems);
         }
 
         // GET: TaskItems/Details/5
@@ -65,6 +66,7 @@ namespace TaskManagement.Controllers
         {
             ViewData["Status"] = CreateStatusSelectList();
             ViewData["AssignedTo"] = CreateUsersSelectList();
+            ViewData["ProjectID"] = CreateProjectIDSelectList();
             return View();
         }
 
@@ -73,7 +75,7 @@ namespace TaskManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,CreatedBy,AssignedTo,CreatedDate,ActivatedDate,WorkedHours,Priority,Status,Description")] TaskItem taskItem)
+        public async Task<IActionResult> Create([Bind("ID,Title,CreatedBy,AssignedTo,CreatedDate,ActivatedDate,WorkedHours,Priority,Status,ProjectID,Description")] TaskItem taskItem)
         {
             if (ModelState.IsValid)
             {
@@ -100,6 +102,7 @@ namespace TaskManagement.Controllers
         {
             ViewData["Status"] = CreateStatusSelectList();
             ViewData["AssignedTo"] = CreateUsersSelectList();
+            ViewData["ProjectID"] = CreateProjectIDSelectList();
             if (id == null)
             {
                 return NotFound();
@@ -118,7 +121,7 @@ namespace TaskManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,AssignedTo,ActivatedDate,WorkedHours,Priority,Status,Description")] TaskItem taskItem)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,AssignedTo,ActivatedDate,WorkedHours,Priority,Status,ProjectID,Description")] TaskItem taskItem)
         {
             if (id != taskItem.ID)
             {
@@ -279,6 +282,13 @@ namespace TaskManagement.Controllers
         private SelectList CreateUsersSelectList()
         {
             var selectList = new SelectList(_context.Users, "FullName", "FullName");
+            return selectList;
+        }
+
+        //creates list with project IDs
+        private SelectList CreateProjectIDSelectList()
+        {
+            var selectList = new SelectList(_context.Project, "ID", "Title");
             return selectList;
         }
 

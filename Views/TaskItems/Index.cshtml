@@ -7,13 +7,17 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a type="button" class="btn btn-primary" asp-action="Create">Create New Task</a> 
+    <a type="button" class="btn btn-primary" asp-controller="Projects" asp-action="CreateInTask">Create New Project</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProjectID)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CreatedBy)
@@ -36,6 +40,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Status)
             </th>
+
             <th></th>
         </tr>
     </thead>
@@ -44,6 +49,9 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Project.Title)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedBy)

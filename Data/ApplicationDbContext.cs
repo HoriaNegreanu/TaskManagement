@@ -15,6 +15,7 @@ namespace TaskManagement.Data
         public DbSet<TaskManagement.Models.TaskItem> TaskItem { get; set; }
         public DbSet<TaskManagement.Models.Comment> Comment { get; set; }
         public DbSet<TaskManagement.Models.FileOnFileSystemModel> FileOnFileSystem { get; set; }
+        public DbSet<TaskManagement.Models.Project> Project { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

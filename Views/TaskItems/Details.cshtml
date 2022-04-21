@@ -121,22 +121,18 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>#</th>
                         <th>Name</th>
                         <th>Description</th>
-                        <th>File Type</th>
-                        <th>Created On</th>
-                        <th>Actions</th>
+                        <th>Added On</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var file in Model.FilesOnFileSystem)
                     {
                         <tr>
-                            <th>@file.Id</th>
-                            <td>@file.Name</td>
+                            <td>@file.NameWithExtension</td>
                             <td>@file.Description</td>
-                            <td>@file.FileType</td>
                             <td>@file.CreatedOn</td>
                             <td>
                                 <a type="button" class="btn btn-primary" asp-controller="Files" asp-action="DownloadFileFromFileSystem" asp-route-id="@file.Id">Download</a>

@@ -52,6 +52,7 @@ namespace TaskManagement.Controllers
             var listComments = await _context.Comment.Where(c => c.TaskItemID == id).ToListAsync();
             var result = new TaskItemViewModel();
             result.TaskItem = taskItem;
+            //order descending by date
             result.Comments = listComments.OrderByDescending(i => i.CreatedDate).ToList();
 
             //gets files associated with task
@@ -257,6 +258,8 @@ namespace TaskManagement.Controllers
                     viewModel.FilesOnFileSystem.Add(file);
                 }
             }
+            //order descending by date
+            viewModel.FilesOnFileSystem = viewModel.FilesOnFileSystem.OrderByDescending(i => i.CreatedOn).ToList();
             return viewModel;
         }
 

@@ -1,4 +1,6 @@
-﻿namespace TaskManagement.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace TaskManagement.Models
 {
     public class FileOnFileSystemModel
     {
@@ -10,5 +12,11 @@
         public string UploadedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string FilePath { get; set; }
+
+        [NotMapped]
+        public string NameWithExtension
+        {
+            get { return string.Format("{0}{1}", Name, Extension); }
+        }
     }
 }

@@ -12,21 +12,21 @@ using TaskManagement.Models;
 
 namespace TaskManagement.Controllers
 {
-    public class TaskItemsController : Controller
+    public class TaskItemsClosedController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public TaskItemsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public TaskItemsClosedController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
 
-        // GET: TaskItems
-        public async Task<IActionResult> Index(string searchTitle, string taskPriority, int? taskProject, string taskAssignedTo, string taskStatus)
+        // GET: TaskItemsClosed
+        public async Task<IActionResult> Index(string searchTitle, string taskPriority, int? taskProject, string taskAssignedTo)
         {
-            var taskItems = await _context.TaskItem.Where(t => t.Status != Status.Closed.ToString()).Include(t => t.Project).ToListAsync();
+            var taskItems = await _context.TaskItem.Where(t => t.Status == Status.Closed.ToString()).Include(t => t.Project).ToListAsync();
 
             //Filters
             //Search by title filter
@@ -56,13 +56,6 @@ namespace TaskManagement.Controllers
                 taskItems = taskItems.Where(x => x.Priority == taskPriority).ToList();
             }
 
-            //Search by status
-            var statuses = CreateStatusSelectList();
-            if (!String.IsNullOrEmpty(taskStatus))
-            {
-                taskItems = taskItems.Where(t => t.Status.Contains(taskStatus, System.StringComparison.CurrentCultureIgnoreCase)).ToList();
-            }
-
             //Create model with data
             var taskItemFilterVM = new TaskItemFiltersViewModel()
             {
@@ -70,66 +63,12 @@ namespace TaskManagement.Controllers
                 TaskItems = taskItems,
                 Projects = projects,
                 Users = users,
-                Statuses = statuses
             };
 
-            return View("Index", taskItemFilterVM);
+            return View("../TaskItems/IndexClosed", taskItemFilterVM);
         }
 
-        // GET: TaskItems/IndexClosed
-        public async Task<IActionResult> IndexClosed(string searchTitle, string taskPriority, int? taskProject, string taskAssignedTo, string taskStatus)
-        {
-            var taskItems = await _context.TaskItem.Include(t => t.Project).ToListAsync();
-
-            //Filters
-            //Search by title filter
-            if (!String.IsNullOrEmpty(searchTitle))
-            {
-                taskItems = taskItems.Where(t => t.Title.Contains(searchTitle, System.StringComparison.CurrentCultureIgnoreCase)).ToList();
-            }
-
-            //Search by assigned to
-            var users = CreateUsersSelectList();
-            if (!String.IsNullOrEmpty(taskAssignedTo))
-            {
-                taskItems = taskItems.Where(t => t.AssignedTo.Contains(taskAssignedTo, System.StringComparison.CurrentCultureIgnoreCase)).ToList();
-            }
-
-            //Search by project
-            var projects = CreateProjectIDSelectList();
-            if (taskProject != null)
-            {
-                taskItems = taskItems.Where(x => x.ProjectID == taskProject).ToList();
-            }
-
-            //Search by priority
-            var prioties = new SelectList(Enum.GetValues(typeof(Priority)));
-            if (!string.IsNullOrEmpty(taskPriority))
-            {
-                taskItems = taskItems.Where(x => x.Priority == taskPriority).ToList();
-            }
-
-            //Search by status
-            var statuses = CreateStatusSelectList();
-            if (!String.IsNullOrEmpty(taskStatus))
-            {
-                taskItems = taskItems.Where(t => t.Status.Contains(taskStatus, System.StringComparison.CurrentCultureIgnoreCase)).ToList();
-            }
-
-            //Create model with data
-            var taskItemFilterVM = new TaskItemFiltersViewModel()
-            {
-                Priorities = prioties,
-                TaskItems = taskItems,
-                Projects = projects,
-                Users = users,
-                Statuses = statuses
-            };
-
-            return View("IndexClosed", taskItemFilterVM);
-        }
-
-        // GET: TaskItems/Details/5
+        // GET: TaskItemsClosed/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -158,47 +97,10 @@ namespace TaskManagement.Controllers
             var fileuploadViewModel = await LoadAllFiles(id);
             result.FilesOnFileSystem = fileuploadViewModel.FilesOnFileSystem;
 
-            return View(result);
+            return View("../TaskItems/Details", result);
         }
 
-        // GET: TaskItems/Create
-        public IActionResult Create()
-        {
-            //Gets data for select lists
-            ViewData["Status"] = CreateStatusSelectList();
-            ViewData["AssignedTo"] = CreateUsersSelectList();
-            ViewData["ProjectID"] = CreateProjectIDSelectList();
-            return View();
-        }
-
-        // POST: TaskItems/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,CreatedBy,AssignedTo,CreatedDate,ActivatedDate,WorkedHours,Priority,Status,ProjectID,Description")] TaskItem taskItem)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = await _userManager.GetUserAsync(HttpContext.User);
-                var name = user.FirstName + " " + user.LastName;
-                taskItem.CreatedDate = DateTime.Now;
-                taskItem.CreatedBy = name;
-                taskItem.WorkedHours = 0;
-                taskItem.ActivatedDate = null;
-                //taskItem.Status = Status.Proposed.ToString();
-                if(taskItem.Status == Status.Active.ToString())
-                {
-                    taskItem.ActivatedDate = DateTime.Now;
-                }
-                _context.Add(taskItem);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(taskItem);
-        }
-
-        // GET: TaskItems/Edit/5
+        // GET: TaskItemsClosed/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             ViewData["Status"] = CreateStatusSelectList();
@@ -214,10 +116,10 @@ namespace TaskManagement.Controllers
             {
                 return NotFound();
             }
-            return View(taskItem);
+            return View("../TaskItems/Edit", taskItem);
         }
 
-        // POST: TaskItems/Edit/5
+        // POST: TaskItemsClosed/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -245,11 +147,11 @@ namespace TaskManagement.Controllers
                     }
                     updateT.CreatedDate = createdOn;
                     updateT.CreatedBy = createdBy;
-                    if(updateT.Status != status && updateT.Status == Status.Active.ToString())
+                    if (updateT.Status != status && updateT.Status == Status.Active.ToString())
                     {
                         updateT.ActivatedDate = DateTime.Now;
                     }
-                    else if(updateT.Status != status && status == Status.Active.ToString())
+                    else if (updateT.Status != status && status == Status.Active.ToString())
                     {
                         var timeWorked = (DateTime.Now - updateT.ActivatedDate).Value;
                         updateT.WorkedHours += Math.Abs(Convert.ToDecimal(timeWorked.TotalHours));
@@ -274,7 +176,7 @@ namespace TaskManagement.Controllers
             return View(taskItem);
         }
 
-        // GET: TaskItems/Delete/5
+        // GET: TaskItemsClosed/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -289,10 +191,10 @@ namespace TaskManagement.Controllers
                 return NotFound();
             }
 
-            return View(taskItem);
+            return View("../TaskItems/Delete", taskItem);
         }
 
-        // POST: TaskItems/Delete/5
+        // POST: TaskItemsClosed/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -322,15 +224,34 @@ namespace TaskManagement.Controllers
             return _context.TaskItem.Any(e => e.ID == id);
         }
 
-        public static void DeleteTaskStatic(int id, ApplicationDbContext _context)
+        //set task status to 'Closed'
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CloseTask(int? id)
         {
-            //delete Task from DB
-            var taskItem = _context.TaskItem.Find(id);
-            _context.TaskItem.Remove(taskItem);
+            var taskItem = await _context.TaskItem.FindAsync(id);
+            if (taskItem == null)
+            {
+                return NotFound();
+            }
+            var status = taskItem.Status;
+            taskItem.Status = Status.Closed.ToString();
+            if (taskItem.Status != status && status == Status.Active.ToString())
+            {
+                var timeWorked = (DateTime.Now - taskItem.ActivatedDate).Value;
+                taskItem.WorkedHours += Math.Abs(Convert.ToDecimal(timeWorked.TotalHours));
+                taskItem.ActivatedDate = null;
+            }
+            _context.Update(taskItem);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
 
-            //delete all files associated with task from DB
+        //gets files associated with task
+        private async Task<FileUploadViewModel> LoadAllFiles(int? id)
+        {
             var viewModel = new FileUploadViewModel();
-            var allFiles = _context.FileOnFileSystem.ToList();
+            var allFiles = await _context.FileOnFileSystem.ToListAsync();
             viewModel.FilesOnFileSystem = new List<FileOnFileSystemModel>();
             foreach (var file in allFiles)
             {
@@ -341,39 +262,11 @@ namespace TaskManagement.Controllers
             }
             //order descending by date
             viewModel.FilesOnFileSystem = viewModel.FilesOnFileSystem.OrderByDescending(i => i.CreatedOn).ToList();
-            foreach (var file in viewModel.FilesOnFileSystem)
-            {
-                _context.FileOnFileSystem.Remove(file);
-            }
-            //delete task files folder
-            var basePath = Path.Combine(Directory.GetCurrentDirectory() + "\\Files\\" + id.ToString() + "\\");
-            bool basePathExists = System.IO.Directory.Exists(basePath);
-            if (basePathExists) Directory.Delete(basePath, true);
-
-            //save DB changes
-            //await _context.SaveChangesAsync();
-        }
-
-        //gets files associated with task
-        private async Task<FileUploadViewModel> LoadAllFiles(int? id)
-        {
-            var viewModel = new FileUploadViewModel();
-            var allFiles = await _context.FileOnFileSystem.ToListAsync();
-            viewModel.FilesOnFileSystem = new List<FileOnFileSystemModel>();
-            foreach(var file in allFiles)
-            {
-                if(getTaskIdFromPath(file.FilePath) == id)
-                {
-                    viewModel.FilesOnFileSystem.Add(file);
-                }
-            }
-            //order descending by date
-            viewModel.FilesOnFileSystem = viewModel.FilesOnFileSystem.OrderByDescending(i => i.CreatedOn).ToList();
             return viewModel;
         }
 
         //gets task id from a path
-        private static int getTaskIdFromPath(string path)
+        private int getTaskIdFromPath(string path)
         {
             var toBeSearched = "Files\\";
             var result = path.Substring(path.IndexOf(toBeSearched) + toBeSearched.Length);

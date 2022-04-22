@@ -160,6 +160,12 @@ namespace TaskManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var tasks = await _context.TaskItem.Where(t => t.ProjectID == id).ToListAsync();
+            foreach (var task in tasks)
+            {
+                TaskItemsController.DeleteTaskStatic(task.ID,_context);
+            }
+
             var project = await _context.Project.FindAsync(id);
             _context.Project.Remove(project);
             await _context.SaveChangesAsync();

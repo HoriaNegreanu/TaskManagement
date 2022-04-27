@@ -1,0 +1,21 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TaskManagement.Models
+{
+    public class EmployeesViewModel
+    {
+        public string UserId { get; set; }
+
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+        public List<TaskItem> Tasks { get; set; }
+        public List<TaskItem> TasksMonth { get; set; }
+
+        [Display(Name = "Total Worked Hours")]
+        public decimal? TotalHours { get; set; }
+        public int? Month { get; set; }
+    }
+}

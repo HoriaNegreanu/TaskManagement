@@ -349,9 +349,6 @@ namespace TaskManagement.Controllers
             var basePath = Path.Combine(Directory.GetCurrentDirectory() + "\\Files\\" + id.ToString() + "\\");
             bool basePathExists = System.IO.Directory.Exists(basePath);
             if (basePathExists) Directory.Delete(basePath, true);
-
-            //save DB changes
-            //await _context.SaveChangesAsync();
         }
 
         //gets files associated with task

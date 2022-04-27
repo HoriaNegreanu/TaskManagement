@@ -1,0 +1,145 @@
+﻿@model TaskManagement.Models.EmployeesViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-success alert-dismissible" style="margin-top:20px">
+        @ViewBag.Message
+    </div>
+}
+<h1>Details for Employee @ViewBag.EmployeeName</h1>
+
+<div>
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TotalHours)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TotalHours)
+        </dd>
+    </dl>
+</div>
+<div>
+    <table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Tasks[0].Title)</th>
+            <th>@Html.DisplayNameFor(model => model.Tasks[0].ProjectID)</th>
+            <th>@Html.DisplayNameFor(model => model.Tasks[0].CreatedBy)</th>
+            <th>@Html.DisplayNameFor(model => model.Tasks[0].AssignedTo)</th>
+            <th>@Html.DisplayNameFor(model => model.Tasks[0].CreatedDate)</th>
+            <th>@Html.DisplayNameFor(model => model.Tasks[0].ActivatedDate)</th>
+            <th>@Html.DisplayNameFor(model => model.Tasks[0].WorkedHours)</th>
+            <th>@Html.DisplayNameFor(model => model.Tasks[0].Priority)</th>
+            <th>@Html.DisplayNameFor(model => model.Tasks[0].Status)</th>
+        </tr>
+    </thead>
+    <tbody>
+            @foreach (var task in Model.Tasks)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => task.Title)</td>
+                    <td>@Html.DisplayFor(modelItem => task.Project.Title)</td>
+                    <td>@Html.DisplayFor(modelItem => task.CreatedBy)</td>
+                    <td>@Html.DisplayFor(modelItem => task.AssignedTo)</td>
+                    <td>@Html.DisplayFor(modelItem => task.CreatedDate)</td>
+                    <td>@Html.DisplayFor(modelItem => task.ActivatedDate)</td>
+                    <td>@Html.DisplayFor(modelItem => task.WorkedHours)</td>
+                    <td>@Html.DisplayFor(modelItem => task.Priority)</td>
+                    <td>@Html.DisplayFor(modelItem => task.Status)</td>
+                </tr>
+            }
+    </tbody>
+</table>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<div class="bar-chart">
+    <div class="col-md-12">
+        <h3>Bar chart</h3>
+        <div class="col-md-4">
+            <form asp-action="GetTasksForMonth" asp-controller="Employees">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="UserId" value="@Model.UserId" />
+                <div class="form-group mb-3">
+                    <label asp-for="Month" class="control-label"></label>
+                    <select asp-for="Month" class="form-control">
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                    <span asp-validation-for="Month" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Display Graph" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+        <div>
+            <canvas id="hoursBarChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="text/javascript">
+
+    //get arrays of labels and values
+    var model = '@Html.Raw(Json.Serialize(Model.TasksMonth))'
+    var tasks = JSON.parse(model);
+    if(tasks === null)
+        tasks = [];
+    var labels = tasks.map(function(task) {return task.title});
+    var values = tasks.map(function(task) {return task.workedHours});
+
+    //create bar chart
+    $(document).ready(function () {
+
+        $(function () {
+            var ctx = document.getElementById("hoursBarChart");
+            var myBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Worked hours",
+                        backgroundColor: "rgba(255,99,132,0.2)",
+                        borderColor: "rgba(255,99,132,1)",
+                        borderWidth: 2,
+                        hoverBackgroundColor: "rgba(255,99,132,0.4)",
+                        hoverBorderColor: "rgba(255,99,132,1)",
+                        data: values
+                    }]
+                }
+            });
+        });
+    });
+</script>
+}

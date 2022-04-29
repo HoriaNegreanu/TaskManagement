@@ -76,59 +76,6 @@ namespace TaskManagement.Controllers
             return View("Index", taskItemFilterVM);
         }
 
-        // GET: TaskItems/IndexClosed
-        public async Task<IActionResult> IndexClosed(string searchTitle, string taskPriority, int? taskProject, string taskAssignedTo, string taskStatus)
-        {
-            var taskItems = await _context.TaskItem.Include(t => t.Project).ToListAsync();
-
-            //Filters
-            //Search by title filter
-            if (!String.IsNullOrEmpty(searchTitle))
-            {
-                taskItems = taskItems.Where(t => t.Title.Contains(searchTitle, System.StringComparison.CurrentCultureIgnoreCase)).ToList();
-            }
-
-            //Search by assigned to
-            var users = CreateUsersSelectList();
-            if (!String.IsNullOrEmpty(taskAssignedTo))
-            {
-                taskItems = taskItems.Where(t => t.AssignedTo.Contains(taskAssignedTo, System.StringComparison.CurrentCultureIgnoreCase)).ToList();
-            }
-
-            //Search by project
-            var projects = CreateProjectIDSelectList();
-            if (taskProject != null)
-            {
-                taskItems = taskItems.Where(x => x.ProjectID == taskProject).ToList();
-            }
-
-            //Search by priority
-            var prioties = new SelectList(Enum.GetValues(typeof(Priority)));
-            if (!string.IsNullOrEmpty(taskPriority))
-            {
-                taskItems = taskItems.Where(x => x.Priority == taskPriority).ToList();
-            }
-
-            //Search by status
-            var statuses = CreateStatusSelectList();
-            if (!String.IsNullOrEmpty(taskStatus))
-            {
-                taskItems = taskItems.Where(t => t.Status.Contains(taskStatus, System.StringComparison.CurrentCultureIgnoreCase)).ToList();
-            }
-
-            //Create model with data
-            var taskItemFilterVM = new TaskItemFiltersViewModel()
-            {
-                Priorities = prioties,
-                TaskItems = taskItems,
-                Projects = projects,
-                Users = users,
-                Statuses = statuses
-            };
-
-            return View("IndexClosed", taskItemFilterVM);
-        }
-
         // GET: TaskItems/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -254,6 +201,14 @@ namespace TaskManagement.Controllers
                         var timeWorked = (DateTime.Now - updateT.ActivatedDate).Value;
                         updateT.WorkedHours += Math.Abs(Convert.ToDecimal(timeWorked.TotalHours));
                         updateT.ActivatedDate = null;
+
+                        var employeeHour = new EmployeeHour();
+                        employeeHour.WorkedHours = Math.Abs(Convert.ToDecimal(timeWorked.TotalHours));
+                        employeeHour.TaskItemID = id;
+                        var user = _userManager.Users.ToList<ApplicationUser>().Find(u => u.FullName == updateT.AssignedTo);
+                        employeeHour.UserID = user.Id;
+                        employeeHour.CompletedDate = DateTime.Now;
+                        _context.Add(employeeHour);
                     }
                     _context.Update(updateT);
                     await _context.SaveChangesAsync();

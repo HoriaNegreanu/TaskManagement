@@ -42,26 +42,27 @@
             <th>@Html.DisplayNameFor(model => model.Tasks[0].CreatedBy)</th>
             <th>@Html.DisplayNameFor(model => model.Tasks[0].AssignedTo)</th>
             <th>@Html.DisplayNameFor(model => model.Tasks[0].CreatedDate)</th>
-            <th>@Html.DisplayNameFor(model => model.Tasks[0].ActivatedDate)</th>
             <th>@Html.DisplayNameFor(model => model.Tasks[0].WorkedHours)</th>
             <th>@Html.DisplayNameFor(model => model.Tasks[0].Priority)</th>
             <th>@Html.DisplayNameFor(model => model.Tasks[0].Status)</th>
         </tr>
     </thead>
     <tbody>
-            @foreach (var task in Model.Tasks)
+            @if(Model.Tasks != null)
             {
-                <tr>
-                    <td>@Html.DisplayFor(modelItem => task.Title)</td>
-                    <td>@Html.DisplayFor(modelItem => task.Project.Title)</td>
-                    <td>@Html.DisplayFor(modelItem => task.CreatedBy)</td>
-                    <td>@Html.DisplayFor(modelItem => task.AssignedTo)</td>
-                    <td>@Html.DisplayFor(modelItem => task.CreatedDate)</td>
-                    <td>@Html.DisplayFor(modelItem => task.ActivatedDate)</td>
-                    <td>@Html.DisplayFor(modelItem => task.WorkedHours)</td>
-                    <td>@Html.DisplayFor(modelItem => task.Priority)</td>
-                    <td>@Html.DisplayFor(modelItem => task.Status)</td>
-                </tr>
+                @foreach (var task in Model.Tasks)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => task.Title)</td>
+                        <td>@Html.DisplayFor(modelItem => task.Project.Title)</td>
+                        <td>@Html.DisplayFor(modelItem => task.CreatedBy)</td>
+                        <td>@Html.DisplayFor(modelItem => task.AssignedTo)</td>
+                        <td>@Html.DisplayFor(modelItem => task.CreatedDate)</td>
+                        <td>@Html.DisplayFor(modelItem => task.WorkedHours)</td>
+                        <td>@Html.DisplayFor(modelItem => task.Priority)</td>
+                        <td>@Html.DisplayFor(modelItem => task.Status)</td>
+                    </tr>
+                }
             }
     </tbody>
 </table>
@@ -72,35 +73,32 @@
 
 <div class="bar-chart">
     <div class="col-md-12">
-        <h3>Bar chart</h3>
-        <div class="col-md-4">
-            <form asp-action="GetTasksForMonth" asp-controller="Employees">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="UserId" value="@Model.UserId" />
-                <div class="form-group mb-3">
-                    <label asp-for="Month" class="control-label"></label>
-                    <select asp-for="Month" class="form-control">
-                        <option value="1">January</option>
-                        <option value="2">February</option>
-                        <option value="3">March</option>
-                        <option value="4">April</option>
-                        <option value="5">May</option>
-                        <option value="6">June</option>
-                        <option value="7">July</option>
-                        <option value="8">August</option>
-                        <option value="9">September</option>
-                        <option value="10">October</option>
-                        <option value="11">November</option>
-                        <option value="12">December</option>
-                    </select>
-                    <span asp-validation-for="Month" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Display Graph" class="btn btn-primary" />
-                </div>
-            </form>
-        </div>
+        <h3>Daily work chart</h3>
+        <form asp-action="GetTasksForMonth" asp-controller="Employees">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="UserId" value="@Model.UserId" />
+            Year <input class="form-control-inline" asp-for="Year" class="form-control" />
+            Month <select asp-for="Month" class="form-control-inline">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <input type="submit" value="Display Graph" class="btn btn-primary" />
+        </form>
         <div>
+            @if(@ViewBag.TotalWorkHoursMonth != null && @ViewBag.TotalWorkHoursMonth != 0)
+            {
+                <h3>Total hours worked: @ViewBag.TotalWorkHoursMonth</h3>
+            }
             <canvas id="hoursBarChart" width="400" height="200"></canvas>
         </div>
     </div>
@@ -112,12 +110,57 @@
 <script type="text/javascript">
 
     //get arrays of labels and values
-    var model = '@Html.Raw(Json.Serialize(Model.TasksMonth))'
-    var tasks = JSON.parse(model);
-    if(tasks === null)
-        tasks = [];
-    var labels = tasks.map(function(task) {return task.title});
-    var values = tasks.map(function(task) {return task.workedHours});
+    var model = '@Html.Raw(Json.Serialize(Model.EmployeeHours))'
+    var activities = JSON.parse(model);
+    if(activities === null)
+        activities = [];
+    var labels = activities.map(function(activity) {return activity.completedDate.substring(0, activity.completedDate.indexOf('T'))});
+    var values = activities.map(function(activity) {return activity.workedHours});
+
+    var chartData = [];
+    for(const i in labels){
+        var object = {label:labels[i].substring(labels[i].lastIndexOf('-') + 1), value:values[i]};
+        chartData.push(object);
+    }
+    console.log(chartData);
+
+    //remove duplicate dates and sum the hours
+    var chartDataUnique = [];
+
+    var dt = new Date();
+    var month = parseInt('@Html.Raw(Json.Serialize(Model.Month))');
+    var year = dt.getFullYear();
+    daysInMonth = new Date(year, month, 0).getDate();
+    for(var i=1;i<=daysInMonth;i++){
+        var object = {label:String(i), value:0}
+        chartDataUnique.push(object);
+    }
+
+    chartData.forEach(element => {
+        var exists = chartDataUnique.find(item => item.label === element.label);
+        if(!exists){
+            chartDataUnique.push({...element});
+        }
+        else{
+            exists.value += element.value;
+        }
+    });
+    chartDataUnique.forEach(element => {
+        element.label = parseInt(element.label);
+    });
+    console.log(chartDataUnique);
+
+    //sort chartDataUnique by date
+    chartDataUnique.sort((a,b) => a.label - b.label);
+
+    //create labels and values for bar chart
+    labels = [];
+    values = [];
+    chartDataUnique.forEach(element => {
+        labels.push(element.label);
+        values.push(element.value);
+    });
+
 
     //create bar chart
     $(document).ready(function () {
@@ -137,6 +180,16 @@
                         hoverBorderColor: "rgba(255,99,132,1)",
                         data: values
                     }]
+                },
+                options: {
+                    scales: {
+                        xAxes: {
+                            title: {
+                                display: true,
+                                text: 'Day'
+                            }
+                        }
+                    }
                 }
             });
         });

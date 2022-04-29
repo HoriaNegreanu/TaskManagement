@@ -12,10 +12,11 @@ namespace TaskManagement.Models
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
         public List<TaskItem> Tasks { get; set; }
-        public List<TaskItem> TasksMonth { get; set; }
 
         [Display(Name = "Total Worked Hours")]
         public decimal? TotalHours { get; set; }
         public int? Month { get; set; }
+        public int? Year { get; set; }
+        public List<EmployeeHour>? EmployeeHours { get; set; }
     }
 }

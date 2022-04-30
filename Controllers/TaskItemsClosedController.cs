@@ -16,6 +16,7 @@ namespace TaskManagement.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private const int ITEMS_PER_PAGE = 3;
 
         public TaskItemsClosedController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
@@ -24,7 +25,7 @@ namespace TaskManagement.Controllers
         }
 
         // GET: TaskItemsClosed
-        public async Task<IActionResult> Index(string searchTitle, string taskPriority, int? taskProject, string taskAssignedTo)
+        public async Task<IActionResult> Index(string searchTitle, string taskPriority, int? taskProject, string taskAssignedTo, int currentPage)
         {
             var taskItems = await _context.TaskItem.Where(t => t.Status == Status.Closed.ToString()).Include(t => t.Project).ToListAsync();
 
@@ -56,6 +57,15 @@ namespace TaskManagement.Controllers
                 taskItems = taskItems.Where(x => x.Priority == taskPriority).ToList();
             }
 
+            //Pagination
+            var count = taskItems.Count();
+            var totalPages = (int)Math.Ceiling(count / (double)ITEMS_PER_PAGE);
+            if (currentPage > totalPages)
+                currentPage = totalPages;
+            else if (currentPage < 1)
+                currentPage = 1;
+            taskItems = taskItems.Skip((currentPage - 1) * ITEMS_PER_PAGE).Take(ITEMS_PER_PAGE).ToList();
+
             //Create model with data
             var taskItemFilterVM = new TaskItemFiltersViewModel()
             {
@@ -63,6 +73,8 @@ namespace TaskManagement.Controllers
                 TaskItems = taskItems,
                 Projects = projects,
                 Users = users,
+                CurrentPage = currentPage,
+                TotalPages = totalPages
             };
 
             return View("../TaskItems/IndexClosed", taskItemFilterVM);
@@ -294,6 +306,35 @@ namespace TaskManagement.Controllers
         {
             var selectList = new SelectList(_context.Project, "ID", "Title");
             return selectList;
+        }
+
+        //Pagination
+        public async Task<IActionResult> PreviousPage(int? currentPage, string searchTitle, string taskPriority, int? taskProject, string taskAssignedTo, string taskStatus)
+        {
+            return RedirectToAction("Index", new
+            {
+                currentPage = currentPage - 1,
+                searchTitle = searchTitle,
+                taskPriority = taskPriority,
+                taskProject = taskProject,
+                taskAssignedTo = taskAssignedTo,
+                taskStatus = taskStatus
+            });
+        }
+
+        public async Task<IActionResult> NextPage(int? currentPage, string searchTitle, string taskPriority, int? taskProject, string taskAssignedTo, string taskStatus)
+        {
+            if (currentPage == 0)
+                currentPage = 1;
+            return RedirectToAction("Index", new
+            {
+                currentPage = currentPage + 1,
+                searchTitle = searchTitle,
+                taskPriority = taskPriority,
+                taskProject = taskProject,
+                taskAssignedTo = taskAssignedTo,
+                taskStatus = taskStatus
+            });
         }
 
     }

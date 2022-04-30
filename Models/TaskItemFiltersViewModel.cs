@@ -12,7 +12,9 @@ namespace TaskManagement.Models
         public string? TaskPriority { get; set; }
         public int? TaskProject { get; set; }
         public string? SearchTitle { get; set; }
-        public string? TaskAssignedTo {get; set; }
-        public string? TaskStatus {get; set; }
+        public string? TaskAssignedTo { get; set; }
+        public string? TaskStatus { get; set; }
+        public int? CurrentPage { get; set; }
+        public int? TotalPages { get; set; }
     }
 }

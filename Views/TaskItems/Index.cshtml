@@ -106,3 +106,24 @@
         }
     </tbody>
 </table>
+@{
+    var prevDisabled = "";
+    if (Model.CurrentPage <= 1)
+        prevDisabled = "disabled";
+
+    var nextDisabled = "";
+    if (Model.CurrentPage >= Model.TotalPages)
+        nextDisabled = "disabled";
+}
+<form method="get">
+    <p>
+        <input type="hidden" asp-for="CurrentPage" />
+        <input type="hidden" asp-for="TaskProject" />
+        <input type="hidden" asp-for="TaskAssignedTo" />
+        <input type="hidden" asp-for="TaskPriority" />
+        <input type="hidden" asp-for="TaskStatus" />
+        <input type="hidden" asp-for="SearchTitle" />
+        <input class="btn btn-secondary @prevDisabled"type="submit" value="Previous Page" asp-controller="TaskItems" asp-action="PreviousPage"/>
+        <input class="btn btn-secondary @nextDisabled"type="submit" value="Next Page" asp-controller="TaskItems" asp-action="NextPage"/>
+    </p>
+</form>

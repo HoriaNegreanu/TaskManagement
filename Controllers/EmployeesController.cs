@@ -42,6 +42,8 @@ namespace TaskManagement.Controllers
             //create model
             if (year == null)
                 year = DateTime.Now.Year;
+            if(month == null)
+                month = DateTime.Now.Month;
             var taskItems = await _context.TaskItem.Where(t => t.AssignedTo == employee.FullName).Include(t => t.Project).ToListAsync();
             var employeeHours = await _context.EmployeeHour.Where(e => e.UserID == employee.Id).Include(e => e.User).Include(e => e.TaskItem).ToListAsync();
             var model = new EmployeesViewModel();
@@ -51,6 +53,7 @@ namespace TaskManagement.Controllers
             model.FirstName = employee.FirstName;
             model.LastName = employee.LastName;
             model.Tasks = taskItems;
+            model.EmployeeHoursDistinct = null;
 
             if (month != null)
             {
@@ -60,6 +63,9 @@ namespace TaskManagement.Controllers
             }
             else
                 model.EmployeeHours = null;
+
+            //remove duplicate tasks from employeeHours
+            model.EmployeeHoursDistinct = model.EmployeeHours.DistinctBy(t => t.TaskItemID).ToList();
 
             var totalHours = model.Tasks.Sum(x => x.WorkedHours);
             model.TotalHours = totalHours;

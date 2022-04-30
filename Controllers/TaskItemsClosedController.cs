@@ -278,8 +278,7 @@ namespace TaskManagement.Controllers
         private SelectList CreateStatusSelectList()
         {
             var selectList = new SelectList(Enum.GetValues(typeof(Status))
-                        .Cast<Status>()
-                        .Where(e => e != Status.Closed));
+                        .Cast<Status>());
             return selectList;
         }
 

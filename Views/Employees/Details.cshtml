@@ -67,6 +67,42 @@
     </tbody>
 </table>
 </div>
+@if (Model.EmployeeHoursDistinct.Count() > 0)
+{
+    <h3>All tasks from selected period</h3>
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.EmployeeHoursDistinct[0].TaskItem.Title)</th>
+                    <th>@Html.DisplayNameFor(model => model.EmployeeHoursDistinct[0].TaskItem.ProjectID)</th>
+                    <th>@Html.DisplayNameFor(model => model.EmployeeHoursDistinct[0].TaskItem.CreatedBy)</th>
+                    <th>@Html.DisplayNameFor(model => model.EmployeeHoursDistinct[0].TaskItem.CreatedDate)</th>
+                    <th>@Html.DisplayNameFor(model => model.EmployeeHoursDistinct[0].TaskItem.WorkedHours)</th>
+                    <th>@Html.DisplayNameFor(model => model.EmployeeHoursDistinct[0].TaskItem.Priority)</th>
+                    <th>@Html.DisplayNameFor(model => model.EmployeeHoursDistinct[0].TaskItem.Status)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Tasks != null)
+                {
+                    @foreach (var employeeHour in Model.EmployeeHoursDistinct)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => employeeHour.TaskItem.Title)</td>
+                            <td>@Html.DisplayFor(modelItem => employeeHour.TaskItem.Project.Title)</td>
+                            <td>@Html.DisplayFor(modelItem => employeeHour.TaskItem.CreatedBy)</td>
+                            <td>@Html.DisplayFor(modelItem => employeeHour.TaskItem.CreatedDate)</td>
+                            <td>@Html.DisplayFor(modelItem => employeeHour.TaskItem.WorkedHours)</td>
+                            <td>@Html.DisplayFor(modelItem => employeeHour.TaskItem.Priority)</td>
+                            <td>@Html.DisplayFor(modelItem => employeeHour.TaskItem.Status)</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
@@ -172,7 +208,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: "Worked hours",
+                        label: "Hours worked",
                         backgroundColor: "rgba(255,99,132,0.2)",
                         borderColor: "rgba(255,99,132,1)",
                         borderWidth: 2,
@@ -187,6 +223,11 @@
                             title: {
                                 display: true,
                                 text: 'Day'
+                            }
+                        },
+                        yAxes: {
+                            ticks: {
+                                stepSize: 1
                             }
                         }
                     }

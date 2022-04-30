@@ -18,5 +18,6 @@ namespace TaskManagement.Models
         public int? Month { get; set; }
         public int? Year { get; set; }
         public List<EmployeeHour>? EmployeeHours { get; set; }
+        public List<EmployeeHour>? EmployeeHoursDistinct { get; set; }
     }
 }

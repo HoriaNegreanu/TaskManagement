@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,6 +13,7 @@ using TaskManagement.Models;
 
 namespace TaskManagement.Controllers
 {
+    [Authorize]
     public class TaskItemsClosedController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -189,6 +191,7 @@ namespace TaskManagement.Controllers
         }
 
         // GET: TaskItemsClosed/Delete/5
+        [Authorize(Roles = "Administrator, QA")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -207,6 +210,7 @@ namespace TaskManagement.Controllers
         }
 
         // POST: TaskItemsClosed/Delete/5
+        [Authorize(Roles = "Administrator, QA")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -237,6 +241,7 @@ namespace TaskManagement.Controllers
         }
 
         //set task status to 'Closed'
+        [Authorize(Roles = "Administrator, QA")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CloseTask(int? id)

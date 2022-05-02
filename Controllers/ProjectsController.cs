@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using TaskManagement.Models;
 
 namespace TaskManagement.Controllers
 {
+    [Authorize(Roles = "Administrator, QA")]
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,24 +26,6 @@ namespace TaskManagement.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.Project.ToListAsync());
-        }
-
-        // GET: Projects/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var project = await _context.Project
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (project == null)
-            {
-                return NotFound();
-            }
-
-            return View(project);
         }
 
         // GET: Projects/Create

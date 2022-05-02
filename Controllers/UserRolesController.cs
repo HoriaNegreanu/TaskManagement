@@ -46,6 +46,7 @@ namespace TaskManagement.Controllers
                 return View("NotFound");
             }
             ViewBag.UserName = user.UserName;
+            ViewBag.FullName = user.FullName;
             var model = new List<ManageUserRolesViewModel>();
             foreach (var role in _roleManager.Roles)
             {

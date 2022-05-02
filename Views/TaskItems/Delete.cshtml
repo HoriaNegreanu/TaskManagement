@@ -1,14 +1,12 @@
 ﻿@model TaskManagement.Models.TaskItem
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete " + Model.Title;
 }
 
-<h1>Delete</h1>
-
-<h3>Are you sure you want to delete this?</h3>
+<h3>Are you sure you want to delete task @Model.Title?</h3>
+<h3 style="color:red">Deleting a task will also remove all employee activity related to it. It is recomended to leave mark tasks as 'Closed' instead of deleting them!</h3>
 <div>
-    <h4>TaskItem</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">

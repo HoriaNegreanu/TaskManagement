@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskManagement.Data;
@@ -6,6 +7,7 @@ using TaskManagement.Models;
 
 namespace TaskManagement.Controllers
 {
+    [Authorize]
     public class EmployeesController : Controller
     {
         private readonly ApplicationDbContext _context;

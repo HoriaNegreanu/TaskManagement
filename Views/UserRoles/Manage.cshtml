@@ -1,13 +1,12 @@
 ﻿@model List<ManageUserRolesViewModel>
 @{
-    ViewData["Title"] = "Manage";
+    ViewData["Title"] = "Manage Roles for " + @ViewBag.FullName;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <form method="post">
     <div class="card">
         <div class="card-header">
-            <h2>Manage User Roles</h2>
-            Add/Remove Roles for User / @ViewBag.UserName.
+            <h2>Manage User Roles for @ViewBag.FullName / @ViewBag.UserName.</h2>
         </div>
         <div class="card-body">
             @for (int i = 0; i < Model.Count; i++)
@@ -24,10 +23,10 @@
             <div asp-validation-summary="All" class="text-danger"></div>
         </div>
         <div class="card-footer">
-            <input type="submit" value="Update" class="btn btn-primary"
+            <input type="submit" value="Update" class="btn btn-purple"
                    style="width:auto" />
             <a href="/UserRoles"
-               class="btn btn-primary" style="width:auto">Cancel</a>
+               class="btn btn-purple" style="width:auto">Cancel</a>
         </div>
     </div>
 </form>

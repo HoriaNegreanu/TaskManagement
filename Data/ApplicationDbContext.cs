@@ -11,7 +11,6 @@ namespace TaskManagement.Data
             : base(options)
         {
         }
-        public DbSet<TaskManagement.Models.Movie>? Movie { get; set; }
         public DbSet<TaskManagement.Models.TaskItem> TaskItem { get; set; }
         public DbSet<TaskManagement.Models.Comment> Comment { get; set; }
         public DbSet<TaskManagement.Models.FileOnFileSystemModel> FileOnFileSystem { get; set; }

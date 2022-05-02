@@ -1,7 +1,7 @@
 ﻿@model TaskManagement.Models.EmployeesViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = @ViewBag.EmployeeName + " Details";
 }
 @if (ViewBag.Message != null)
 {
@@ -34,38 +34,40 @@
     </dl>
 </div>
 <div>
-    <table class="table">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.Tasks[0].Title)</th>
-            <th>@Html.DisplayNameFor(model => model.Tasks[0].ProjectID)</th>
-            <th>@Html.DisplayNameFor(model => model.Tasks[0].CreatedBy)</th>
-            <th>@Html.DisplayNameFor(model => model.Tasks[0].AssignedTo)</th>
-            <th>@Html.DisplayNameFor(model => model.Tasks[0].CreatedDate)</th>
-            <th>@Html.DisplayNameFor(model => model.Tasks[0].WorkedHours)</th>
-            <th>@Html.DisplayNameFor(model => model.Tasks[0].Priority)</th>
-            <th>@Html.DisplayNameFor(model => model.Tasks[0].Status)</th>
-        </tr>
-    </thead>
-    <tbody>
-            @if(Model.Tasks != null)
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<div class="bar-chart">
+    <div class="col-md-12">
+        <h3>Monthly work chart</h3>
+        <form asp-action="GetTasksForMonth" asp-controller="Employees">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="UserId" value="@Model.UserId" />
+            Year <input class="form-control-inline" asp-for="Year" class="form-control" />
+            Month <select asp-for="Month" class="form-control-inline">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <input type="submit" value="Display Graph" class="btn btn-purple" />
+        </form>
+        <div>
+            @if(@ViewBag.TotalWorkHoursMonth != null && @ViewBag.TotalWorkHoursMonth != 0)
             {
-                @foreach (var task in Model.Tasks)
-                {
-                    <tr>
-                        <td>@Html.DisplayFor(modelItem => task.Title)</td>
-                        <td>@Html.DisplayFor(modelItem => task.Project.Title)</td>
-                        <td>@Html.DisplayFor(modelItem => task.CreatedBy)</td>
-                        <td>@Html.DisplayFor(modelItem => task.AssignedTo)</td>
-                        <td>@Html.DisplayFor(modelItem => task.CreatedDate)</td>
-                        <td>@Html.DisplayFor(modelItem => task.WorkedHours)</td>
-                        <td>@Html.DisplayFor(modelItem => task.Priority)</td>
-                        <td>@Html.DisplayFor(modelItem => task.Status)</td>
-                    </tr>
-                }
+                <h3>Total hours worked: @ViewBag.TotalWorkHoursMonth</h3>
             }
-    </tbody>
-</table>
+            <canvas id="hoursBarChart" width="400" height="200"></canvas>
+        </div>
+    </div>
 </div>
 @if (Model.EmployeeHoursDistinct.Count() > 0)
 {
@@ -103,42 +105,6 @@
         </table>
     </div>
 }
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-<div class="bar-chart">
-    <div class="col-md-12">
-        <h3>Daily work chart</h3>
-        <form asp-action="GetTasksForMonth" asp-controller="Employees">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="UserId" value="@Model.UserId" />
-            Year <input class="form-control-inline" asp-for="Year" class="form-control" />
-            Month <select asp-for="Month" class="form-control-inline">
-                <option value="1">January</option>
-                <option value="2">February</option>
-                <option value="3">March</option>
-                <option value="4">April</option>
-                <option value="5">May</option>
-                <option value="6">June</option>
-                <option value="7">July</option>
-                <option value="8">August</option>
-                <option value="9">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
-            </select>
-            <input type="submit" value="Display Graph" class="btn btn-primary" />
-        </form>
-        <div>
-            @if(@ViewBag.TotalWorkHoursMonth != null && @ViewBag.TotalWorkHoursMonth != 0)
-            {
-                <h3>Total hours worked: @ViewBag.TotalWorkHoursMonth</h3>
-            }
-            <canvas id="hoursBarChart" width="400" height="200"></canvas>
-        </div>
-    </div>
-</div>
 
 
 @section scripts{

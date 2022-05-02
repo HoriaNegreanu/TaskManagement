@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,6 +13,7 @@ using TaskManagement.Models;
 
 namespace TaskManagement.Controllers
 {
+    [Authorize]
     public class TaskItemsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -121,6 +123,7 @@ namespace TaskManagement.Controllers
         }
 
         // GET: TaskItems/Create
+        [Authorize(Roles = "Administrator, QA")]
         public IActionResult Create()
         {
             //Gets data for select lists
@@ -133,6 +136,7 @@ namespace TaskManagement.Controllers
         // POST: TaskItems/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Administrator, QA")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Title,CreatedBy,AssignedTo,CreatedDate,ActivatedDate,WorkedHours,Priority,Status,ProjectID,Description")] TaskItem taskItem)
@@ -242,6 +246,7 @@ namespace TaskManagement.Controllers
         }
 
         // GET: TaskItems/Delete/5
+        [Authorize(Roles = "Administrator, QA")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -260,6 +265,7 @@ namespace TaskManagement.Controllers
         }
 
         // POST: TaskItems/Delete/5
+        [Authorize(Roles = "Administrator, QA")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

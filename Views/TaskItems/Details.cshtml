@@ -1,7 +1,9 @@
 ﻿@model TaskManagement.Models.TaskItemViewModel
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.TaskItem.Title + " Details";
 }
 @if (ViewBag.Message != null)
 {
@@ -9,9 +11,8 @@
         @ViewBag.Message
     </div>
 }
-<h1>Details</h1>
+<h1>Details for @Model.TaskItem.Title</h1>
 <div>
-    <h4>TaskItem</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -71,7 +72,7 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.TaskItem.ID">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.TaskItem.ID">Edit</a>
     <a asp-action="Index">Back to List</a>
 </div>
 <div class="row">
@@ -88,7 +89,7 @@
                     <span asp-validation-for="Message" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary" />
+                    <input type="submit" value="Create" class="btn btn-purple" />
                 </div>
             </form>
         </div>
@@ -115,7 +116,7 @@
                     <input type="text" autocomplete="off" placeholder="Enter File Description" name="description" required />
                 </div>
                 <div class="form-group mb-3">
-                    <button type="submit" class="btn btn-primary" asp-controller="Files" asp-action="UploadToFileSystem">Upload to File System</button>
+                    <button type="submit" class="btn btn-purple" asp-controller="Files" asp-action="UploadToFileSystem">Upload to File System</button>
                 </div>  
             </form>
             <table class="table">
@@ -135,7 +136,7 @@
                             <td>@file.Description</td>
                             <td>@file.CreatedOn</td>
                             <td>
-                                <a type="button" class="btn btn-primary" asp-controller="Files" asp-action="DownloadFileFromFileSystem" asp-route-id="@file.Id">Download</a>
+                                <a type="button" class="btn btn-purple" asp-controller="Files" asp-action="DownloadFileFromFileSystem" asp-route-id="@file.Id">Download</a>
                                 <a type="button" class="btn btn-danger" asp-controller="Files" asp-action="DeleteFileFromFileSystem" asp-route-id="@file.Id">Delete</a>
                             </td>
                         </tr>

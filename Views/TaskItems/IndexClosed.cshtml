@@ -1,10 +1,18 @@
 ﻿@model TaskManagement.Models.TaskItemFiltersViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Closed Tasks";
+
+    var prevDisabled = "";
+    if (Model.CurrentPage <= 1)
+        prevDisabled = "disabled";
+
+    var nextDisabled = "";
+    if (Model.CurrentPage >= Model.TotalPages)
+        nextDisabled = "disabled";
 }
 
-<h1>Index Closed</h1>
+<h1>Closed Tasks</h1>
 
 <form asp-controller="TaskItemsClosed" asp-action="Index" method="get">
     <p>
@@ -97,15 +105,6 @@
         }
     </tbody>
 </table>
-@{
-    var prevDisabled = "";
-    if (Model.CurrentPage <= 1)
-        prevDisabled = "disabled";
-
-    var nextDisabled = "";
-    if (Model.CurrentPage >= Model.TotalPages)
-        nextDisabled = "disabled";
-}
 <form method="get">
     <p>
         <input type="hidden" asp-for="CurrentPage" />

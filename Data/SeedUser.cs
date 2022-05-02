@@ -14,7 +14,7 @@ namespace TaskManagement.Data
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
             //Add default roles
-            string[] roles = new string[] { "Administrator", "Employee" };
+            string[] roles = new string[] { "Administrator", "QA", "Employee" };
 
             foreach (string role in roles)
                 if (!context.Roles.Any(r => r.Name == role))
@@ -39,6 +39,7 @@ namespace TaskManagement.Data
 
                 //add administrator role
                 userManager.AddToRoleAsync(adminUser, "Administrator").Wait();
+                userManager.AddToRoleAsync(adminUser, "QA").Wait();
                 userManager.AddToRoleAsync(adminUser, "Employee").Wait();
             }
         }

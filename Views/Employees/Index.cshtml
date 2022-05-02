@@ -1,6 +1,6 @@
 ﻿@model List<EmployeesViewModel>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Employee Activity";
 }
 <h1>Employees</h1>
 <table class="table">
@@ -18,7 +18,7 @@
             <td>@employee.FirstName</td>
             <td>@employee.LastName</td>
             <td>
-                <a class="btn btn-primary" asp-controller="Employees" asp-action="Details" asp-route-userId="@employee.UserId">Details</a>
+                <a class="btn btn-purple" asp-controller="Employees" asp-action="Details" asp-route-userId="@employee.UserId">Details</a>
             </td>
         </tr>
         }

@@ -22,6 +22,10 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RequireAdministratorRole",
          policy => policy.RequireRole("Administrator"));
+    options.AddPolicy("RequireQARole",
+         policy => policy.RequireRole("QA"));
+    options.AddPolicy("RequireAdministratorAndQARole",
+         policy => policy.RequireRole("Administrator", "QA"));
 });
 
 builder.Services.AddControllersWithViews();
@@ -32,7 +36,6 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-    SeedMovies.Initialize(services);
     await SeedUser.Initialize(services);
 }
 

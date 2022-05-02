@@ -1,77 +1,111 @@
 ﻿@model TaskManagement.Models.TaskItem
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit " + Model.Title;
+    string isReadOnly = "";
+    @if (!(await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorAndQARole")).Succeeded)
+    {
+        isReadOnly = "readonly";
+    }
 }
 
-<h1>Edit</h1>
+<h1>Edit @Model.Title</h1>
 
-<h4>TaskItem</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-12">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ID" />
-            <div class="form-group mb-3">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="AssignedTo" class="control-label"></label>
-                @*<select asp-for="AssignedTo" class ="form-control" asp-items="ViewBag.AssignedTo"></select>*@
-                @Html.DropDownListFor(m => m.AssignedTo, 
-                (SelectList)ViewBag.AssignedTo, 
-                "Select User",
-                new {@class= "form-control"})
-                <span asp-validation-for="AssignedTo" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="ActivatedDate" class="control-label"></label>
-                <input asp-for="ActivatedDate" class="form-control" readonly/>
-                <span asp-validation-for="ActivatedDate" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="WorkedHours" class="control-label"></label>
-                <input asp-for="WorkedHours" class="form-control" />
-                <span asp-validation-for="WorkedHours" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="Priority" class="control-label"></label>
-                @Html.DropDownListFor(m => m.Priority, 
-                new SelectList(Enum.GetValues(typeof(Priority))), 
-                "Select Priority",
-                new {@class= "form-control"})
-                <span asp-validation-for="Priority" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="Status" class="control-label"></label>
-                @*<select asp-for="Status" class ="form-control" asp-items="ViewBag.Status"></select>*@
-                @Html.DropDownListFor(m => m.Status, 
-                (SelectList)ViewBag.Status, 
-                "Select Status",
-                new {@class= "form-control"})
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-             <div class="form-group mb-3">
-                <label asp-for="ProjectID" class="control-label"></label>
-                @*<select asp-for="Status" class ="form-control" asp-items="ViewBag.Status"></select>*@
-                @Html.DropDownListFor(m => m.ProjectID, 
-                (SelectList)ViewBag.ProjectID, 
-                "Select Project",
-                new {@class= "form-control"})
-                <span asp-validation-for="Project" class="text-danger"></span>
+            <div class="row">
+                <div class="form-group mb-3 col-md-6 col-sm-12">
+                    <label asp-for="Title" class="control-label"></label>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorAndQARole")).Succeeded)
+                    {<input asp-for="Title" class="form-control"/>}
+                    else
+                    {<input asp-for="Title" class="form-control" readonly/>}
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3 col-md-6 col-sm-12">
+                    <label asp-for="AssignedTo" class="control-label"></label>
+                    @Html.DropDownListFor(m => m.AssignedTo, 
+                    (SelectList)ViewBag.AssignedTo, 
+                    "Select User",
+                    new {@class= "form-control"})
+                    <span asp-validation-for="AssignedTo" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3 col-md-6 col-sm-12">
+                    <label asp-for="ActivatedDate" class="control-label"></label>
+                    <input asp-for="ActivatedDate" class="form-control" readonly/>
+                    <span asp-validation-for="ActivatedDate" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3 col-md-6 col-sm-12">
+                    <label asp-for="WorkedHours" class="control-label"></label>
+                    <input asp-for="WorkedHours" class="form-control" readonly/>
+                    <span asp-validation-for="WorkedHours" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3 col-md-6 col-sm-12">
+                    <label asp-for="Priority" class="control-label"></label>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorAndQARole")).Succeeded)
+                    {
+                        @Html.DropDownListFor(m => m.Priority, 
+                        new SelectList(Enum.GetValues(typeof(Priority))), 
+                        "Select Priority",
+                        new {@class= "form-control"})
+                    }
+                    else
+                    {
+                        <input asp-for="Priority" class="form-control" readonly/>
+                    }
+                    <span asp-validation-for="Priority" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3 col-md-6 col-sm-12">
+                    <label asp-for="Status" class="control-label"></label>
+                    @Html.DropDownListFor(m => m.Status, 
+                    (SelectList)ViewBag.Status, 
+                    "Select Status",
+                    new {@class= "form-control"})
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3 col-md-6 col-sm-12">
+                    <label asp-for="ProjectID" class="control-label"></label>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorAndQARole")).Succeeded)
+                    {
+                        @Html.DropDownListFor(m => m.ProjectID, 
+                        (SelectList)ViewBag.ProjectID, 
+                        "Select Project",
+                        new {@class= "form-control"})
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(m => m.ProjectID, 
+                        (SelectList)ViewBag.ProjectID, 
+                        "Select Project",
+                        new {@class= "form-control", disabled = "disabled"})
+                    }
+                    <span asp-validation-for="Project" class="text-danger"></span>
+                </div>
             </div>
             <div class="form-group mb-3">
                 <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" class="form-control" ></textarea>
+                <textarea asp-for="Description" class="form-control" rows="8"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group mb-3">
-                <input type="submit" value="Save" class="btn btn-primary" />
-                <button type="submit" class="btn btn-primary" asp-controller="TaskItemsClosed" asp-action="CloseTask" asp-route-id="@Model.ID">Close task</button>
-            </div>  
+            @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorAndQARole")).Succeeded)
+            {
+               <div class="form-group mb-3">
+                   <input type="submit" value="Save" class="btn btn-purple" />
+                   <button type="submit" class="btn btn-purple" asp-controller="TaskItemsClosed" asp-action="CloseTask" asp-route-id="@Model.ID">Close task</button>
+                </div>
+            }
+            else
+            {
+                <div class="form-group mb-3">
+                   <input type="submit" value="Save" class="btn btn-purple" />
+                </div>
+            }
         </form>
     </div>
 </div>

@@ -32,3 +32,23 @@ body {
     border-radius: .25rem;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
+
+.bg-purple {
+    background-color: rgba(62, 19, 171, 0.8);
+}
+
+.bg-purple-01 {
+    background-color: rgba(62, 19, 171, 0.1);
+}
+
+.btn-purple {
+    color: #fff;
+    background-color: rgba(62, 19, 171, 0.8);
+    border-color: rgba(62, 19, 171, 0.8);
+}
+
+.btn-purple:hover {
+    color: #fff;
+    background-color: rgba(62, 19, 171, 1);
+    border-color: rgba(62, 19, 171, 1);
+}

@@ -43,10 +43,10 @@
         <select class="form-control-inline" asp-for="TaskStatus" asp-items="Model.Statuses">
             <option value="">All</option>
         </select>
-        <input class="btn btn-success"type="submit" value="Filter" />
+        <input class="btn btn-purple"type="submit" value="Filter" />
     </p>
 </form>
-<table class="table">
+<table class="table row-spacing">
     <thead>
         <tr>
             <th>
@@ -60,9 +60,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.TaskItems[0].AssignedTo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TaskItems[0].CreatedDate)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.TaskItems[0].WorkedHours)
@@ -79,7 +76,7 @@
     </thead>
     <tbody>
         @foreach (var item in Model.TaskItems) {
-                <tr>
+                <tr class="table-card">
                     <td>
                         @Html.DisplayFor(modelItem => item.Title)
                     </td>
@@ -93,9 +90,6 @@
                         @Html.DisplayFor(modelItem => item.AssignedTo)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.CreatedDate)
-                    </td>
-                    <td>
                         @Html.DisplayFor(modelItem => item.WorkedHours)
                     </td>
                     <td>
@@ -104,7 +98,7 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Status)
                     </td>
-                    <td>
+                    <td class="btn-table-group">
                         <a class="btn btn-purple" asp-action="Edit" asp-route-id="@item.ID"><i class="bi bi-pencil"></i></a>
                         <a class="btn btn-purple" asp-action="Details" asp-route-id="@item.ID"><i class="bi bi-list"></i></a>
                         @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorAndQARole")).Succeeded)

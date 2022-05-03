@@ -11,6 +11,7 @@ namespace TaskManagement.Models
 
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
+        public string FullName { get; set; }
         public List<TaskItem> Tasks { get; set; }
 
         [Display(Name = "Total Worked Hours")]
@@ -19,5 +20,6 @@ namespace TaskManagement.Models
         public int? Year { get; set; }
         public List<EmployeeHour>? EmployeeHours { get; set; }
         public List<EmployeeHour>? EmployeeHoursDistinct { get; set; }
+        public string? SearchName { get; set; }
     }
 }

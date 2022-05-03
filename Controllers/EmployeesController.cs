@@ -17,9 +17,16 @@ namespace TaskManagement.Controllers
             _context = context;
             _userManager = userManager;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchName)
         {
             var users = _userManager.Users.ToList<ApplicationUser>();
+            //Filters
+            //Search by employee name filter
+            if (!String.IsNullOrEmpty(searchName))
+            {
+                users = users.Where(t => t.FullName.Contains(searchName, System.StringComparison.CurrentCultureIgnoreCase)).ToList();
+            }
+
             var employeesViewModel = new List<EmployeesViewModel>();
             foreach (ApplicationUser user in users)
             {
@@ -48,12 +55,21 @@ namespace TaskManagement.Controllers
                 month = DateTime.Now.Month;
             var taskItems = await _context.TaskItem.Where(t => t.AssignedTo == employee.FullName).Include(t => t.Project).ToListAsync();
             var employeeHours = await _context.EmployeeHour.Where(e => e.UserID == employee.Id).Include(e => e.User).Include(e => e.TaskItem).ToListAsync();
+
+            //remove password hash from being exposed
+            //remove description, since a large description may lead to errors
+            foreach (var employeeHour in employeeHours)
+            {
+                employeeHour.User = null;
+                employeeHour.TaskItem.Description = null;
+            }
             var model = new EmployeesViewModel();
             model.Month = month;
             model.Year = year;
             model.UserId = employee.Id;
             model.FirstName = employee.FirstName;
             model.LastName = employee.LastName;
+            model.FullName = employee.FullName;
             model.Tasks = taskItems;
             model.EmployeeHoursDistinct = null;
 
@@ -78,6 +94,11 @@ namespace TaskManagement.Controllers
         public async Task<IActionResult> GetTasksForMonth(string userId, int month, int year)
         {
             return RedirectToAction("Details", "Employees", new { UserId = userId, Month = month, Year = year });
+        }
+
+        public async Task<IActionResult> ViewAllTaskForEmployee(string fullName)
+        {
+            return RedirectToAction("Index", "TaskItems", new { TaskAssignedTo = fullName });
         }
     }
 }

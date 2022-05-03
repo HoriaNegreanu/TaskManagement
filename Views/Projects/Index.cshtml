@@ -7,9 +7,9 @@
 <h1>Projects</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-purple" asp-action="Create">Create New Project</a>
 </p>
-<table class="table">
+<table class="table row-spacing">
     <thead>
         <tr>
             <th>
@@ -20,13 +20,13 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
+        <tr class="table-card">
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+            <td class="btn-table-group">
+                <a class="btn btn-purple" asp-action="Edit" asp-route-id="@item.ID"><i class="bi bi-pencil"></i></a>
+                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.ID"><i class="bi bi-trash"></i></a>
             </td>
         </tr>
 }

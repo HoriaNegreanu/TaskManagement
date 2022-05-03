@@ -121,26 +121,26 @@ namespace TaskManagement.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
-            if (Input.FirstName != firstName)
-            {
-                user.FirstName = Input.FirstName;
-                var setFirstNameResult = await _userManager.UpdateAsync(user);
-                if (!setFirstNameResult.Succeeded)
-                {
-                    StatusMessage = "Unexpected error when trying to set first name.";
-                    return RedirectToPage();
-                }
-            }
-            if (Input.LastName != lastName)
-            {
-                user.LastName = Input.LastName;
-                var setLastNameResult = await _userManager.UpdateAsync(user);
-                if (!setLastNameResult.Succeeded)
-                {
-                    StatusMessage = "Unexpected error when trying to set last name.";
-                    return RedirectToPage();
-                }
-            }
+            //if (Input.FirstName != firstName)
+            //{
+            //    user.FirstName = Input.FirstName;
+            //    var setFirstNameResult = await _userManager.UpdateAsync(user);
+            //    if (!setFirstNameResult.Succeeded)
+            //    {
+            //        StatusMessage = "Unexpected error when trying to set first name.";
+            //        return RedirectToPage();
+            //    }
+            //}
+            //if (Input.LastName != lastName)
+            //{
+            //    user.LastName = Input.LastName;
+            //    var setLastNameResult = await _userManager.UpdateAsync(user);
+            //    if (!setLastNameResult.Succeeded)
+            //    {
+            //        StatusMessage = "Unexpected error when trying to set last name.";
+            //        return RedirectToPage();
+            //    }
+            //}
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";

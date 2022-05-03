@@ -9,37 +9,9 @@
         @ViewBag.Message
     </div>
 }
-<h1>Details for Employee @ViewBag.EmployeeName</h1>
-
-<div>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TotalHours)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TotalHours)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+<h1 class="mb-5">Activity for Employee @ViewBag.EmployeeName</h1>
 <div class="bar-chart">
     <div class="col-md-12">
-        <h3>Monthly work chart</h3>
         <form asp-action="GetTasksForMonth" asp-controller="Employees">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="UserId" value="@Model.UserId" />
@@ -61,16 +33,21 @@
             <input type="submit" value="Display Graph" class="btn btn-purple" />
         </form>
         <div>
-            @if(@ViewBag.TotalWorkHoursMonth != null && @ViewBag.TotalWorkHoursMonth != 0)
-            {
-                <h3>Total hours worked: @ViewBag.TotalWorkHoursMonth</h3>
-            }
             <canvas id="hoursBarChart" width="400" height="200"></canvas>
         </div>
     </div>
 </div>
+<form class="mb-3">
+    <input type="hidden" name="FullName" value="@Model.FullName" />
+    <input type="submit" class="btn btn-purple" asp-controller="Employees" asp-action="ViewAllTaskForEmployee" value="View All Tasks for Employee"></input>
+</form>
 @if (Model.EmployeeHoursDistinct.Count() > 0)
 {
+    
+    @if (@ViewBag.TotalWorkHoursMonth != null && @ViewBag.TotalWorkHoursMonth != 0)
+    {
+        <h4>Total hours worked: @ViewBag.TotalWorkHoursMonth</h4>
+    }
     <h3>All tasks from selected period</h3>
     <div>
         <table class="table">
@@ -105,14 +82,17 @@
         </table>
     </div>
 }
-
+else
+{
+    <h3>No activity found for selected period</h3>
+}
 
 @section scripts{
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script type="text/javascript">
 
     //get arrays of labels and values
-    var model = '@Html.Raw(Json.Serialize(Model.EmployeeHours))'
+    var model = '@Html.Raw(Json.Serialize(Model.EmployeeHours))';
     var activities = JSON.parse(model);
     if(activities === null)
         activities = [];
@@ -124,7 +104,7 @@
         var object = {label:labels[i].substring(labels[i].lastIndexOf('-') + 1), value:values[i]};
         chartData.push(object);
     }
-    console.log(chartData);
+    //console.log(chartData);
 
     //remove duplicate dates and sum the hours
     var chartDataUnique = [];
@@ -150,7 +130,7 @@
     chartDataUnique.forEach(element => {
         element.label = parseInt(element.label);
     });
-    console.log(chartDataUnique);
+    //console.log(chartDataUnique);
 
     //sort chartDataUnique by date
     chartDataUnique.sort((a,b) => a.label - b.label);
@@ -175,11 +155,11 @@
                     labels: labels,
                     datasets: [{
                         label: "Hours worked",
-                        backgroundColor: "rgba(255,99,132,0.2)",
-                        borderColor: "rgba(255,99,132,1)",
+                        backgroundColor: "rgba(62, 19, 171, 0.2)",
+                        borderColor: "rgba(62, 19, 171, 0.8)",
                         borderWidth: 2,
-                        hoverBackgroundColor: "rgba(255,99,132,0.4)",
-                        hoverBorderColor: "rgba(255,99,132,1)",
+                        hoverBackgroundColor: "rgba(62, 19, 171, 0.4)",
+                        hoverBorderColor: "rgba(62, 19, 171, 0.8)",
                         data: values
                     }]
                 },

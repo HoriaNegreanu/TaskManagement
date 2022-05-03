@@ -1,4 +1,6 @@
 ﻿@model TaskManagement.Models.TaskItemFiltersViewModel
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 
 @{
     ViewData["Title"] = "Closed Tasks";
@@ -29,10 +31,10 @@
         <select class="form-control-inline" asp-for="TaskPriority" asp-items="Model.Priorities">
             <option value="">All</option>
         </select>
-        <input class="btn btn-success"type="submit" value="Filter" />
+        <input class="btn btn-purple"type="submit" value="Filter" />
     </p>
 </form>
-<table class="table">
+<table class="table row-spacing">
     <thead>
         <tr>
             <th>
@@ -46,12 +48,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.TaskItems[0].AssignedTo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TaskItems[0].CreatedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TaskItems[0].ActivatedDate)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.TaskItems[0].WorkedHours)
@@ -68,7 +64,7 @@
     </thead>
     <tbody>
         @foreach (var item in Model.TaskItems) {
-                <tr>
+                <tr class="table-card">
                     <td>
                         @Html.DisplayFor(modelItem => item.Title)
                     </td>
@@ -82,12 +78,6 @@
                         @Html.DisplayFor(modelItem => item.AssignedTo)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.CreatedDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ActivatedDate)
-                    </td>
-                    <td>
                         @Html.DisplayFor(modelItem => item.WorkedHours)
                     </td>
                     <td>
@@ -96,11 +86,14 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Status)
                     </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-                    </td>
+                    <td class="btn-table-group">
+                        <a class="btn btn-purple" asp-action="Edit" asp-route-id="@item.ID"><i class="bi bi-pencil"></i></a>
+                        <a class="btn btn-purple" asp-action="Details" asp-route-id="@item.ID"><i class="bi bi-list"></i></a>
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorAndQARole")).Succeeded)
+                    {
+                        <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.ID"><i class="bi bi-trash"></i></a>
+                    }
+                </td>
                 </tr>
         }
     </tbody>

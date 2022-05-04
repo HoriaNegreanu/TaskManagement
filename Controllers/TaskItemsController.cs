@@ -22,13 +22,16 @@ namespace TaskManagement.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         public readonly IOptions<MailSettings> _mailSettings;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
         private const int ITEMS_PER_PAGE = 3;
 
-        public TaskItemsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IOptions<MailSettings> mailSettings)
+        public TaskItemsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IOptions<MailSettings> mailSettings, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _userManager = userManager;
             _mailSettings = mailSettings;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // GET: TaskItems
@@ -110,9 +113,6 @@ namespace TaskManagement.Controllers
                 return NotFound();
             }
 
-            //Creates ViewBag for displaying messages
-            ViewBag.Message = TempData["Message"];
-
             //gets comments associated with task
             var listComments = await _context.Comment.Where(c => c.TaskItemID == id).ToListAsync();
             var result = new TaskItemViewModel();
@@ -171,7 +171,8 @@ namespace TaskManagement.Controllers
                 //send email
                 if(mailAddress != null)
                 {
-                    SendEmailTaskAvailable(mailAddress, taskItem);
+                    var mailService = new MailService(_mailSettings, _httpContextAccessor);
+                    mailService.SendEmailTaskAvailable(mailAddress, taskItem);
                 } 
 
                 return RedirectToAction(nameof(Index));
@@ -256,7 +257,8 @@ namespace TaskManagement.Controllers
                         //send email
                         if (mailAddress != null)
                         {
-                            SendEmailTaskAvailable(mailAddress, taskItem);
+                            var mailService = new MailService(_mailSettings, _httpContextAccessor);
+                            mailService.SendEmailTaskAvailable(mailAddress, taskItem);
                         }
                     }
 
@@ -435,19 +437,6 @@ namespace TaskManagement.Controllers
                 taskAssignedTo = taskAssignedTo,
                 taskStatus = taskStatus
             });
-        }
-
-        public async void SendEmailTaskAvailable (string destination, TaskItem taskItem)
-        {
-            //create mail request
-            var mailRequest = new MailRequest();
-            var mailBody = "Task " + taskItem.EmailBody() + " is now available.";
-            mailRequest.Body = mailBody;
-            mailRequest.Subject = "Task Available";
-            mailRequest.ToEmail = destination;
-
-            var mailService = new MailService(_mailSettings);
-            mailService.SendEmailAsync(mailRequest);
         }
 
     }

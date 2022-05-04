@@ -5,12 +5,6 @@
 @{
     ViewData["Title"] = Model.TaskItem.Title + " Details";
 }
-@if (ViewBag.Message != null)
-{
-    <div class="alert alert-success alert-dismissible" style="margin-top:20px">
-        @ViewBag.Message
-    </div>
-}
 <h1>Details for @Model.TaskItem.Title</h1>
 <div>
     <hr class="color-purple-08" />

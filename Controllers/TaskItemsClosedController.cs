@@ -22,13 +22,16 @@ namespace TaskManagement.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         public readonly IOptions<MailSettings> _mailSettings;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
         private const int ITEMS_PER_PAGE = 3;
 
-        public TaskItemsClosedController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IOptions<MailSettings> mailSettings)
+        public TaskItemsClosedController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IOptions<MailSettings> mailSettings, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _userManager = userManager;
             _mailSettings = mailSettings;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // GET: TaskItemsClosed
@@ -181,7 +184,8 @@ namespace TaskManagement.Controllers
                         //send email
                         if (mailAddress != null)
                         {
-                            SendEmailTaskAvailable(mailAddress, taskItem);
+                            var mailService = new MailService(_mailSettings, _httpContextAccessor);
+                            mailService.SendEmailTaskAvailable(mailAddress, taskItem);
                         }
                     }
 
@@ -285,7 +289,8 @@ namespace TaskManagement.Controllers
             //send email
             if (mailAddress != null)
             {
-                SendEmailTaskClosed(mailAddress, taskItem);
+                var mailService = new MailService(_mailSettings, _httpContextAccessor);
+                mailService.SendEmailTaskClosed(mailAddress, taskItem);
             }
 
             return RedirectToAction(nameof(Index));
@@ -367,32 +372,6 @@ namespace TaskManagement.Controllers
                 taskAssignedTo = taskAssignedTo,
                 taskStatus = taskStatus
             });
-        }
-
-        public async void SendEmailTaskAvailable(string destination, TaskItem taskItem)
-        {
-            //create mail request
-            var mailRequest = new MailRequest();
-            var mailBody = "Task " + taskItem.EmailBody() + " is now available.";
-            mailRequest.Body = mailBody;
-            mailRequest.Subject = "Task Available";
-            mailRequest.ToEmail = destination;
-
-            var mailService = new MailService(_mailSettings);
-            mailService.SendEmailAsync(mailRequest);
-        }
-
-        public async void SendEmailTaskClosed(string destination, TaskItem taskItem)
-        {
-            //create mail request
-            var mailRequest = new MailRequest();
-            var mailBody = "Task " + taskItem.EmailBody() + " has been closed.";
-            mailRequest.Body = mailBody;
-            mailRequest.Subject = "Task Available";
-            mailRequest.ToEmail = destination;
-
-            var mailService = new MailService(_mailSettings);
-            mailService.SendEmailAsync(mailRequest);
         }
 
     }

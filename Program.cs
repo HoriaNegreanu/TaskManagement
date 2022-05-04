@@ -32,9 +32,10 @@ builder.Services.AddAuthorization(options =>
 
 //Set mail settings
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
-//var emailConfig = builder.Configuration.GetSection("MailSettings").Get<MailSettings>();
-//builder.Services.AddSingleton(emailConfig);
+
 builder.Services.AddTransient<IMailService, MailService>();
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddControllersWithViews();
 

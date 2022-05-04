@@ -27,7 +27,6 @@ namespace TaskManagement.Controllers
         public async Task<IActionResult> Index()
         {
             var fileuploadViewModel = await LoadAllFiles();
-            ViewBag.Message = TempData["Message"];
             return View(fileuploadViewModel);
         }
 
@@ -73,7 +72,6 @@ namespace TaskManagement.Controllers
                 _context.FileOnFileSystem.Add(fileModel);
                 _context.SaveChanges();
             }
-            TempData["Message"] = "File successfully uploaded to File System.";
             return RedirectToAction("Details", "TaskItems", new { id = TaskItemId });
         }
 
@@ -100,7 +98,6 @@ namespace TaskManagement.Controllers
             }
             _context.FileOnFileSystem.Remove(file);
             _context.SaveChanges();
-            TempData["Message"] = $"Removed {file.Name + file.Extension} successfully from File System.";
             return RedirectToAction("Details", "TaskItems", new { id = getTaskIdFromPath(file.FilePath) });
         }
 

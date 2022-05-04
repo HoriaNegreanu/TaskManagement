@@ -48,6 +48,12 @@ namespace TaskManagement.Models
 
         [ForeignKey("ProjectID")]
         public virtual Project? Project { get; set; }
+
+        public string EmailBody()
+        {
+            var result = this.Title + ", added by: " + this.CreatedBy + ", priority: " + this.Priority;
+            return result;
+        }
     }
 
     public enum Priority

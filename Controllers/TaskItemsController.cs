@@ -8,8 +8,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using TaskManagement.Data;
 using TaskManagement.Models;
+using TaskManagement.Models.Mail;
+using TaskManagement.Services;
 
 namespace TaskManagement.Controllers
 {
@@ -18,12 +21,14 @@ namespace TaskManagement.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        public readonly IOptions<MailSettings> _mailSettings;
         private const int ITEMS_PER_PAGE = 3;
 
-        public TaskItemsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public TaskItemsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IOptions<MailSettings> mailSettings)
         {
             _context = context;
             _userManager = userManager;
+            _mailSettings = mailSettings;
         }
 
         // GET: TaskItems
@@ -156,6 +161,19 @@ namespace TaskManagement.Controllers
                 }
                 _context.Add(taskItem);
                 await _context.SaveChangesAsync();
+
+                //send Email
+                //get destination email
+                var users = await _userManager.Users.ToListAsync<ApplicationUser>();
+                var destinationUser = users.First(u => u.FullName == taskItem.AssignedTo);
+                var mailAddress = await _userManager.GetEmailAsync(destinationUser);
+
+                //send email
+                if(mailAddress != null)
+                {
+                    SendEmailTaskAvailable(mailAddress, taskItem);
+                } 
+
                 return RedirectToAction(nameof(Index));
             }
             return View(taskItem);
@@ -201,6 +219,7 @@ namespace TaskManagement.Controllers
                     var createdBy = updateT.CreatedBy;
                     var createdOn = updateT.CreatedDate;
                     var status = updateT.Status;
+                    var assignedTo = updateT.AssignedTo;
                     foreach (var property in typeof(TaskItem).GetProperties())
                     {
                         var propval = property.GetValue(taskItem);
@@ -226,6 +245,21 @@ namespace TaskManagement.Controllers
                         employeeHour.CompletedDate = DateTime.Now;
                         _context.Add(employeeHour);
                     }
+
+                    //send email if user assignedTo is changed
+                    if (updateT.AssignedTo != assignedTo)
+                    {
+                        var users = await _userManager.Users.ToListAsync<ApplicationUser>();
+                        var destinationUser = users.First(u => u.FullName == updateT.AssignedTo);
+                        var mailAddress = await _userManager.GetEmailAsync(destinationUser);
+
+                        //send email
+                        if (mailAddress != null)
+                        {
+                            SendEmailTaskAvailable(mailAddress, taskItem);
+                        }
+                    }
+
                     _context.Update(updateT);
                     await _context.SaveChangesAsync();
                 }
@@ -401,6 +435,19 @@ namespace TaskManagement.Controllers
                 taskAssignedTo = taskAssignedTo,
                 taskStatus = taskStatus
             });
+        }
+
+        public async void SendEmailTaskAvailable (string destination, TaskItem taskItem)
+        {
+            //create mail request
+            var mailRequest = new MailRequest();
+            var mailBody = "Task " + taskItem.EmailBody() + " is now available.";
+            mailRequest.Body = mailBody;
+            mailRequest.Subject = "Task Available";
+            mailRequest.ToEmail = destination;
+
+            var mailService = new MailService(_mailSettings);
+            mailService.SendEmailAsync(mailRequest);
         }
 
     }

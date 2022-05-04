@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TaskManagement.Data;
 using TaskManagement.Models;
+using TaskManagement.Models.Mail;
+using TaskManagement.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +29,12 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("RequireAdministratorAndQARole",
          policy => policy.RequireRole("Administrator", "QA"));
 });
+
+//Set mail settings
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+//var emailConfig = builder.Configuration.GetSection("MailSettings").Get<MailSettings>();
+//builder.Services.AddSingleton(emailConfig);
+builder.Services.AddTransient<IMailService, MailService>();
 
 builder.Services.AddControllersWithViews();
 

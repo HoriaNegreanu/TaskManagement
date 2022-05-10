@@ -51,7 +51,15 @@ namespace TaskManagement.Models
 
         public string EmailBody()
         {
-            var result = this.Title + ", added by: " + this.CreatedBy + ", priority: " + this.Priority + " Link: ";
+            var result = "";
+            if(this.CreatedBy == null)
+            {
+                result = this.Title + ", priority: " + this.Priority;
+            }
+            else
+            {
+                result = this.Title + ", added by: " + this.CreatedBy + ", priority: " + this.Priority;
+            }
             return result;
         }
     }

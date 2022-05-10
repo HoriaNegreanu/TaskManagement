@@ -50,6 +50,20 @@ namespace TaskManagement.Services
             SendEmailAsync(mailRequest);
         }
 
+        public async void SendEmailTaskAssignedToChanged(string destination, TaskItem taskItem)
+        {
+            string myHostUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}/TaskItems/Details/" + taskItem.ID;
+            //create mail request
+            var mailRequest = new MailRequest();
+            var mailBody = "Task " + taskItem.EmailBody() + " has been assigned to you. Task link: " + myHostUrl;
+            mailRequest.Body = mailBody;
+            mailRequest.Subject = "Task Available";
+            mailRequest.ToEmail = destination;
+
+            //var mailService = new MailService(_mailSettings);
+            SendEmailAsync(mailRequest);
+        }
+
         public async void SendEmailTaskClosed(string destination, TaskItem taskItem)
         {
             string myHostUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}/TaskItemsClosed/Details/" + taskItem.ID;

@@ -168,7 +168,7 @@ namespace TaskManagement.Controllers
                 var destinationUser = users.First(u => u.FullName == taskItem.AssignedTo);
                 var mailAddress = await _userManager.GetEmailAsync(destinationUser);
 
-                //send email
+                //send email when creating task
                 if(mailAddress != null)
                 {
                     var mailService = new MailService(_mailSettings, _httpContextAccessor);
@@ -258,7 +258,7 @@ namespace TaskManagement.Controllers
                         if (mailAddress != null)
                         {
                             var mailService = new MailService(_mailSettings, _httpContextAccessor);
-                            mailService.SendEmailTaskAvailable(mailAddress, taskItem);
+                            mailService.SendEmailTaskAssignedToChanged(mailAddress, taskItem);
                         }
                     }
 

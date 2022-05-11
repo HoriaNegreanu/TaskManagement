@@ -99,3 +99,43 @@ tr td:last-child {
 .padding-inherit{
     padding:inherit;
 }
+
+.comment-body {
+    flex: 1 1 auto;
+    padding: 10px 20px;
+    background-color: white;
+    border-bottom: 1px solid rgba(62, 19, 171, 0.8);
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.authoring-info{
+    color: grey;
+    font-size: 14px;
+}
+
+.home-btn{
+    width: 100%;
+    line-height: 50px;
+    vertical-align: middle;
+    font-size: 30px;
+    font-weight: normal;
+    border-radius: 15px;
+}
+
+.home-btn i{
+    line-height: 100px;
+    font-size: 80px;
+}
+
+.nav-link {
+    color: rgba(62, 19, 171, 0.8);
+}
+
+.nav-link:hover{
+    color: black;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    background-color: rgba(62, 19, 171, 0.8);
+}

@@ -74,17 +74,17 @@
                     <span asp-validation-for="Message" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-purple" />
+                    <input type="submit" value="Post comment" class="btn btn-purple" />
                 </div>
             </form>
         </div>
         @foreach (var item in Model.Comments)
         {
-            <div class="card-body">
+            <div class="comment-body">
                 <div class="mb-3">
-                    Author: @Html.DisplayFor(modelItem => item.Author) - @Html.DisplayFor(modelItem => item.CreatedDate)
+                    <span class="authoring-info">@Html.DisplayFor(modelItem => item.Author), created on @Html.DisplayFor(modelItem => item.CreatedDate)</span>
                 </div>
-                <div class="mb-3">
+                <div>
                     @Html.DisplayFor(modelItem => item.Message)
                 </div>
             </div>
@@ -98,13 +98,13 @@
                 <input type="hidden" asp-for="TaskItemID" value="@Model.TaskItem.ID" />
                 <div class="form-group mb-3">
                     <input type="file" name="files" multiple required />
-                    <input type="text" autocomplete="off" placeholder="Enter File Description" name="description" required />
+                    <input class="form-control-inline" type="text" autocomplete="off" placeholder="Enter File Description" name="description" required />
                 </div>
                 <div class="form-group mb-3">
-                    <button type="submit" class="btn btn-purple" asp-controller="Files" asp-action="UploadToFileSystem">Upload to File System</button>
+                    <button type="submit" class="btn btn-purple" asp-controller="Files" asp-action="UploadToFileSystem">Upload</button>
                 </div>  
             </form>
-            <table class="table">
+            <table class="table row-spacing">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -116,13 +116,13 @@
                 <tbody>
                     @foreach (var file in Model.FilesOnFileSystem)
                     {
-                        <tr>
+                        <tr class="table-card">
                             <td>@file.NameWithExtension</td>
                             <td>@file.Description</td>
                             <td>@file.CreatedOn</td>
                             <td>
-                                <a type="button" class="btn btn-purple" asp-controller="Files" asp-action="DownloadFileFromFileSystem" asp-route-id="@file.Id">Download</a>
-                                <a type="button" class="btn btn-danger" asp-controller="Files" asp-action="DeleteFileFromFileSystem" asp-route-id="@file.Id">Delete</a>
+                                <a type="button" class="btn btn-purple" asp-controller="Files" asp-action="DownloadFileFromFileSystem" asp-route-id="@file.Id"><i class="bi bi-download"></i></a>
+                                <a type="button" class="btn btn-danger" asp-controller="Files" asp-action="DeleteFileFromFileSystem" asp-route-id="@file.Id"><i class="bi bi-trash"></i></a>
                             </td>
                         </tr>
                     }

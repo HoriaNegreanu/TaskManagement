@@ -139,3 +139,15 @@ tr td:last-child {
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
     background-color: rgba(62, 19, 171, 0.8);
 }
+
+.employee-statistics {
+    width: 100%;
+    line-height: 50px;
+    vertical-align: middle;
+    font-size: 22px;
+    font-weight: normal;
+    background-color: white;
+    border-bottom: 1px solid rgba(62, 19, 171, 0.8);
+    border-radius: 15px;
+    text-align: center;
+}

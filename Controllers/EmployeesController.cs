@@ -56,6 +56,16 @@ namespace TaskManagement.Controllers
             var taskItems = await _context.TaskItem.Where(t => t.AssignedTo == employee.FullName).Include(t => t.Project).ToListAsync();
             var employeeHours = await _context.EmployeeHour.Where(e => e.UserID == employee.Id).Include(e => e.User).Include(e => e.TaskItem).ToListAsync();
 
+            //get task statistics
+            var activeTasks = taskItems.Where(t => t.Status == Status.Active.ToString()).Count();
+            ViewBag.ActiveTasks = activeTasks;
+            decimal totalWorkHoursMonth = 0;
+            ViewBag.TotalWorkHoursMonth = totalWorkHoursMonth;
+            var assignedTasks = taskItems.Where(t => (t.Status != Status.Closed.ToString() && t.Status != Status.Review.ToString())).Count();
+            ViewBag.AssignedTasks = assignedTasks;
+            var inReviewTasks = taskItems.Where(t => t.Status == Status.Review.ToString()).Count();
+            ViewBag.InReviewTasks = inReviewTasks;
+
             //remove password hash from being exposed
             //remove description, since a large description may lead to errors
             foreach (var employeeHour in employeeHours)
@@ -76,7 +86,7 @@ namespace TaskManagement.Controllers
             if (month != null)
             {
                 model.EmployeeHours = employeeHours.FindAll(t => t.CompletedDate.Month == month).FindAll(t => t.CompletedDate.Year == year).ToList();
-                var totalWorkHoursMonth = model.EmployeeHours.Where(t => t.CompletedDate.Month == month).Where(t => t.CompletedDate.Year == year).Sum(t => t.WorkedHours);
+                totalWorkHoursMonth = model.EmployeeHours.Where(t => t.CompletedDate.Month == month).Where(t => t.CompletedDate.Year == year).Sum(t => t.WorkedHours);
                 ViewBag.TotalWorkHoursMonth = totalWorkHoursMonth;
             }
             else

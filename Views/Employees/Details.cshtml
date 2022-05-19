@@ -10,6 +10,28 @@
     </div>
 }
 <h1 class="mb-5">Activity for Employee @ViewBag.EmployeeName</h1>
+<div class="row">
+    <div class="col-sm-6 col-md-3 mb-3">
+        <div class="employee-statistics">
+            <div>Worked Hours</div><div>@ViewBag.TotalWorkHoursMonth</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3 mb-3">
+        <div class="employee-statistics">
+            <div>Assigned Tasks</div><div>@ViewBag.AssignedTasks</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3 mb-3">
+        <div class="employee-statistics">
+            <div>Active Tasks</div><div>@ViewBag.ActiveTasks</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3 mb-3">
+        <div class="employee-statistics">
+            <div>Tasks In Review</div><div>@ViewBag.InReviewTasks</div>
+        </div>
+    </div>
+</div>
 <div class="bar-chart">
     <div class="col-md-12">
         <form asp-action="GetTasksForMonth" asp-controller="Employees">

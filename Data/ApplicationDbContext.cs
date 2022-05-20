@@ -13,6 +13,7 @@ namespace TaskManagement.Data
         }
         public DbSet<TaskManagement.Models.TaskItem> TaskItem { get; set; }
         public DbSet<TaskManagement.Models.Comment> Comment { get; set; }
+        public DbSet<TaskManagement.Models.TaskStage> TaskStage { get; set; }
         public DbSet<TaskManagement.Models.FileOnFileSystemModel> FileOnFileSystem { get; set; }
         public DbSet<TaskManagement.Models.Project> Project { get; set; }
         public DbSet<TaskManagement.Models.EmployeeHour> EmployeeHour { get; set; }

@@ -61,6 +61,74 @@
     <a class="btn btn-secondary" asp-action="Index">Back to List</a>
 </div>
 <div class="row mt-3">
+    <div class="col-md-12">
+        <h4>Task Stages</h4>
+        <hr />
+        <div>
+            @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorAndQARole")).Succeeded)
+            {
+                <form asp-action="Create" asp-controller="TaskStages">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="TaskItemID" value="@Model.TaskItem.ID" />
+                    <div class="form-group mb-3 col-sm-4">
+                        <label asp-for="Title" class="control-label"></label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Message" class="control-label"></label>
+                        <input asp-for="Message" class="form-control" />
+                        <span asp-validation-for="Message" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Add stage" class="btn btn-purple" />
+                    </div>
+                </form>
+            }
+            <table class="table row-spacing" style="width:100%">
+                <thead>
+                    <tr>
+                        <th style="width:25%">Title</th>
+                        <th style="width:50%">Description</th>
+                        <th style="width:10%">Status</th>
+                        <th style="width:15%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.TaskStages)
+                    {
+                        <tr class="table-card">
+                            <td style="width:25%">@item.Title</td>
+                            <td style="width:50%">@item.Message</td>
+                            @if (item.Status.Equals(StageStatus.Completed.ToString()))
+                            {
+                                <td style="color: green;width:10%">@item.Status</td>
+                            }
+                            else
+                            {
+                                <td style="color: orange;width:10%">@item.Status</td>
+                            }
+                            <td class="btn-table-group" style="width:15%">
+                                <form method="post">
+                                    @if (item.Status.Equals(StageStatus.Completed.ToString()))
+                                    {
+                                        <button type="submit" class="btn btn-purple" asp-controller="TaskStages" asp-action="SetProposed" asp-route-id="@item.ID"><i class="bi bi-x-circle"></i></button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="btn btn-purple" asp-controller="TaskStages" asp-action="SetCompleted" asp-route-id="@item.ID"><i class="bi bi-check-circle"></i></button>
+                                    }
+                                    <a type="submit" class="btn btn-danger" asp-controller="TaskStages" asp-action="Delete" asp-route-id="@item.ID"><i class="bi bi-trash"></i></a>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row mt-3">
     <div class="col-md-6">
         <h4>Comments</h4>
         <hr />
@@ -120,7 +188,7 @@
                             <td>@file.NameWithExtension</td>
                             <td>@file.Description</td>
                             <td>@file.CreatedOn</td>
-                            <td>
+                            <td class="btn-table-group">
                                 <a type="button" class="btn btn-purple" asp-controller="Files" asp-action="DownloadFileFromFileSystem" asp-route-id="@file.Id"><i class="bi bi-download"></i></a>
                                 <a type="button" class="btn btn-danger" asp-controller="Files" asp-action="DeleteFileFromFileSystem" asp-route-id="@file.Id"><i class="bi bi-trash"></i></a>
                             </td>

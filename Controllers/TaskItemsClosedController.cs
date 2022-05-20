@@ -115,6 +115,10 @@ namespace TaskManagement.Controllers
             //order descending by date
             result.Comments = listComments.OrderByDescending(i => i.CreatedDate).ToList();
 
+            //gets stages associated with task
+            var listStages = await _context.TaskStage.Where(c => c.TaskItemID == id).ToListAsync();
+            result.TaskStages = listStages;
+
             //gets files associated with task
             var fileuploadViewModel = await LoadAllFiles(id);
             result.FilesOnFileSystem = fileuploadViewModel.FilesOnFileSystem;
@@ -278,6 +282,14 @@ namespace TaskManagement.Controllers
                 taskItem.ActivatedDate = null;
             }
             _context.Update(taskItem);
+       
+            //set all task stages as completed
+            var listStages = await _context.TaskStage.Where(c => c.TaskItemID == id).ToListAsync();
+            foreach(var stage in listStages)
+            {
+                stage.Status = StageStatus.Completed.ToString();
+                _context.Update(stage);
+            }
             await _context.SaveChangesAsync();
 
             //send Email

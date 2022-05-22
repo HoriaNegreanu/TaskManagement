@@ -122,6 +122,10 @@ namespace TaskManagement.Controllers
 
             //gets stages associated with task
             var listStages = await _context.TaskStage.Where(c => c.TaskItemID == id).ToListAsync();
+            foreach (var stage in listStages)
+            {
+                stage.TaskItem = null;
+            }
             result.TaskStages = listStages;
 
             //gets files associated with task

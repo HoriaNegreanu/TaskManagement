@@ -65,26 +65,31 @@
         <h4>Task Stages</h4>
         <hr />
         <div>
-            @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorAndQARole")).Succeeded)
-            {
-                <form asp-action="Create" asp-controller="TaskStages">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" asp-for="TaskItemID" value="@Model.TaskItem.ID" />
-                    <div class="form-group mb-3 col-sm-4">
-                        <label asp-for="Title" class="control-label"></label>
-                        <input asp-for="Title" class="form-control" />
-                        <span asp-validation-for="Title" class="text-danger"></span>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label asp-for="Message" class="control-label"></label>
-                        <input asp-for="Message" class="form-control" />
-                        <span asp-validation-for="Message" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <input type="submit" value="Add stage" class="btn btn-purple" />
-                    </div>
-                </form>
-            }
+            <div class="row">
+                <div class="col-md-6">
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorAndQARole")).Succeeded)
+                    {
+                        <form asp-action="Create" asp-controller="TaskStages">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input type="hidden" asp-for="TaskItemID" value="@Model.TaskItem.ID" />
+                            <div class="form-group mb-3 col-6">
+                                <input asp-for="Title" class="form-control" placeholder="Title" />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+                            <div class="form-group mb-3">
+                                <input asp-for="Message" class="form-control" placeholder="Description" />
+                                <span asp-validation-for="Message" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Add stage" class="btn btn-purple" />
+                            </div>
+                        </form>
+                    }
+                </div>
+                <div class="col-md-6">
+                     <canvas class="taskStagesDoughnutChart" id="stagesDoughnutChart" width="400" height="400"></canvas>
+                </div>
+            </div>
             <table class="table row-spacing" style="width:100%">
                 <thead>
                     <tr>
@@ -137,8 +142,7 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="TaskItemID" value="@Model.TaskItem.ID" />
                 <div class="form-group mb-3">
-                    <label asp-for="Message" class="control-label"></label>
-                    <input asp-for="Message" class="form-control" />
+                    <input asp-for="Message" class="form-control" placeholder="Add a comment..."/>
                     <span asp-validation-for="Message" class="text-danger"></span>
                 </div>
                 <div class="form-group">
@@ -152,9 +156,9 @@
                 <div class="mb-3">
                     <span class="authoring-info">@Html.DisplayFor(modelItem => item.Author), created on @Html.DisplayFor(modelItem => item.CreatedDate)</span>
                 </div>
-                <div>
+                <p>
                     @Html.DisplayFor(modelItem => item.Message)
-                </div>
+                </p>
             </div>
         }
     </div>
@@ -199,3 +203,45 @@
         </div>
     </div>
 </div>
+
+@section scripts{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript">
+
+        //get all task stages
+        var model = '@Html.Raw(Json.Serialize(Model.TaskStages))';
+        var stages = JSON.parse(model);
+
+        //get number of stages which are proposed and completed
+        var noStagesProposed = stages.filter(obj => obj.status === "Proposed").length;
+        var noStagesCompleted = stages.filter(obj => obj.status === "Completed").length;
+
+        //create chart input data
+        var labels = ["Proposed Stages", "Completed Stages"];
+        var values = [noStagesProposed, noStagesCompleted];
+        var barColors = ["orange", "green"];
+
+        //create Doughnut chart
+        $(document).ready(function () {
+            $(function () {
+                    var ctx = document.getElementById("stagesDoughnutChart");
+                    var myBarChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: "Hours worked",
+                                backgroundColor: barColors,
+                                data: values
+                            }]
+                        },
+                        options: {
+                           title:{
+                               display: true,
+                           }
+                        }
+                    });
+              });
+        });
+    </script> 
+}

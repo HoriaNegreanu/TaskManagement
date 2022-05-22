@@ -101,12 +101,15 @@ tr td:last-child {
 }
 
 .comment-body {
-    flex: 1 1 auto;
     padding: 10px 20px;
     background-color: white;
     border-bottom: 1px solid rgba(62, 19, 171, 0.8);
     border-radius: 10px;
     margin-top: 10px;
+}
+
+.comment-body p {
+    overflow-wrap: break-word;
 }
 
 .authoring-info{
@@ -150,4 +153,11 @@ tr td:last-child {
     border-bottom: 1px solid rgba(62, 19, 171, 0.8);
     border-radius: 15px;
     text-align: center;
+}
+
+.taskStagesDoughnutChart{
+    max-width: 400px!important;
+    max-height: 400px!important;
+    margin-left: auto;
+    margin-right: auto;
 }

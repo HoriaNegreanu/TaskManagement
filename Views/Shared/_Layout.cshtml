@@ -29,7 +29,7 @@
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-controller="TaskItems" asp-action="Index">Tasks</a>
                         </li>
-                        @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorAndQARole")).Succeeded)
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorAndTeamManagerRole")).Succeeded)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-light" asp-area="" asp-controller="Projects" asp-action="Index">Projects</a>

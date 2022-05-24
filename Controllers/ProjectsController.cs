@@ -12,7 +12,7 @@ using TaskManagement.Models;
 
 namespace TaskManagement.Controllers
 {
-    [Authorize(Roles = "Administrator, QA")]
+    [Authorize(Roles = "Administrator, Team Manager")]
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;

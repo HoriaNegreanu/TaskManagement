@@ -24,7 +24,7 @@ namespace TaskManagement.Controllers
         public readonly IOptions<MailSettings> _mailSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        private const int ITEMS_PER_PAGE = 3;
+        private const int ITEMS_PER_PAGE = 10;
 
         public TaskItemsClosedController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IOptions<MailSettings> mailSettings, IHttpContextAccessor httpContextAccessor)
         {

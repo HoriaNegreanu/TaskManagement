@@ -62,7 +62,7 @@
 </div>
 <div class="row mt-3">
     <div class="col-md-12">
-        <h4>Task Stages</h4>
+        <h4>Task Milestones</h4>
         <hr />
         <div>
             <div class="row">
@@ -217,7 +217,7 @@
         var noStagesCompleted = stages.filter(obj => obj.status === "Completed").length;
 
         //create chart input data
-        var labels = ["Proposed Stages", "Completed Stages"];
+        var labels = ["Proposed Milestones", "Completed Milestones"];
         var values = [noStagesProposed, noStagesCompleted];
         var barColors = ["orange", "green"];
 

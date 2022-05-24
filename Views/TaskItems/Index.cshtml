@@ -20,6 +20,9 @@
     @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorAndQARole")).Succeeded)
     {
         <a type="button" class="btn btn-purple" asp-action="Create">Create New Task</a> 
+    }
+    @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorAndTeamManagerRole")).Succeeded)
+    {
         <a type="button" class="btn btn-purple" asp-controller="Projects" asp-action="CreateInTask">Create New Project</a>
     }
     <a type="button" class="btn btn-secondary" asp-controller="TaskItemsClosed" asp-action="Index">View Closed Tasks</a>

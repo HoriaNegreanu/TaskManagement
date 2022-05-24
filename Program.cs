@@ -24,10 +24,12 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RequireAdministratorRole",
          policy => policy.RequireRole("Administrator"));
+    options.AddPolicy("RequireAdministratorAndTeamManagerRole",
+         policy => policy.RequireRole("Administrator","Team Manager"));
     options.AddPolicy("RequireQARole",
          policy => policy.RequireRole("QA"));
     options.AddPolicy("RequireAdministratorAndQARole",
-         policy => policy.RequireRole("Administrator", "QA"));
+         policy => policy.RequireRole("Administrator", "QA", "Team Manager"));
 });
 
 //Set mail settings

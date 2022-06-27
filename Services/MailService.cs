@@ -22,7 +22,6 @@ namespace TaskManagement.Services
             var fromMail = _mailSettings.Mail;
 
             var email = new MimeMessage();
-            //email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
             email.From.Add(new MailboxAddress(displayName, fromMail));
             email.To.Add(MailboxAddress.Parse(mailRequest.ToEmail));
             email.Subject = mailRequest.Subject;
@@ -46,7 +45,6 @@ namespace TaskManagement.Services
             mailRequest.Subject = "Task Available";
             mailRequest.ToEmail = destination;
 
-            //var mailService = new MailService(_mailSettings);
             SendEmailAsync(mailRequest);
         }
 
@@ -60,7 +58,6 @@ namespace TaskManagement.Services
             mailRequest.Subject = "Task Available";
             mailRequest.ToEmail = destination;
 
-            //var mailService = new MailService(_mailSettings);
             SendEmailAsync(mailRequest);
         }
 
@@ -74,7 +71,6 @@ namespace TaskManagement.Services
             mailRequest.Subject = "Task Available";
             mailRequest.ToEmail = destination;
 
-           //var mailService = new MailService(_mailSettings);
             SendEmailAsync(mailRequest);
         }
     }

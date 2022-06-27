@@ -136,9 +136,15 @@ else
     var year = dt.getFullYear();
     daysInMonth = new Date(year, month, 0).getDate();
     for(var i=1;i<=daysInMonth;i++){
-        var object = {label:String(i), value:0}
+        var label;
+        if(i>=0 && i<=9)
+            label = "0" + String(i);
+        else
+            label = String(i);
+        var object = {label:String(label), value:0}
         chartDataUnique.push(object);
     }
+    //console.log(chartDataUnique);
 
     chartData.forEach(element => {
         var exists = chartDataUnique.find(item => item.label === element.label);

@@ -132,6 +132,8 @@ namespace TaskManagement.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+
+                    //Adding default roles to new user
                     await _userManager.AddToRoleAsync(user, "Employee");
 
                     var userId = await _userManager.GetUserIdAsync(user);

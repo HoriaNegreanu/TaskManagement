@@ -120,7 +120,7 @@ namespace TaskManagement.Controllers
             //order descending by date
             result.Comments = listComments.OrderByDescending(i => i.CreatedDate).ToList();
 
-            //gets stages associated with task
+            //gets milestones associated with task
             var listStages = await _context.TaskStage.Where(c => c.TaskItemID == id).ToListAsync();
             foreach (var stage in listStages)
             {
@@ -212,7 +212,7 @@ namespace TaskManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,AssignedTo,ActivatedDate,WorkedHours,Priority,Status,ProjectID,Description")] TaskItem taskItem)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,AssignedTo,ActivatedDate,WorkedHours,Priority,Status,ProjectID,Description,CreatedDate,CreatedBy")] TaskItem taskItem)
         {
             if (id != taskItem.ID)
             {
@@ -223,10 +223,7 @@ namespace TaskManagement.Controllers
             {
                 try
                 {
-                    //make it so fields which can't be edited, like "CreatedBy" or "CreatedDate", will not be null and keep old value
                     TaskItem updateT = await _context.TaskItem.FindAsync(id);
-                    var createdBy = updateT.CreatedBy;
-                    var createdOn = updateT.CreatedDate;
                     var status = updateT.Status;
                     var assignedTo = updateT.AssignedTo;
                     foreach (var property in typeof(TaskItem).GetProperties())
@@ -234,8 +231,6 @@ namespace TaskManagement.Controllers
                         var propval = property.GetValue(taskItem);
                         property.SetValue(updateT, propval);
                     }
-                    updateT.CreatedDate = createdOn;
-                    updateT.CreatedBy = createdBy;
                     if(updateT.Status != status && updateT.Status == Status.Active.ToString())
                     {
                         updateT.ActivatedDate = DateTime.Now;
